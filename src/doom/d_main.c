@@ -210,32 +210,32 @@ void D_Display (void)
 	// do buffered drawing
 	switch (gamestate)
 	{
-	  case GS_LEVEL:
+	case GS_LEVEL:
 		if (!gametic)
 			break;
 		if (automapactive)
-			AM_Drawer ();
+			AM_Drawer();
 		if (wipe || (viewheight != SCREENHEIGHT && fullscreen))
 			redrawsbar = true;
 		if (inhelpscreensstate && !inhelpscreens)
-			redrawsbar = true;              // just put away the help screen
-		ST_Drawer (viewheight == SCREENHEIGHT, redrawsbar );
+			redrawsbar = true; // just put away the help screen
+		ST_Drawer(viewheight == SCREENHEIGHT, redrawsbar);
 		fullscreen = viewheight == SCREENHEIGHT;
 		break;
 
-	  case GS_INTERMISSION:
-		WI_Drawer ();
+	case GS_INTERMISSION:
+		WI_Drawer();
 		break;
 
-	  case GS_FINALE:
-		F_Drawer ();
+	case GS_FINALE:
+		F_Drawer();
 		break;
 
-	  case GS_DEMOSCREEN:
-		D_PageDrawer ();
+	case GS_DEMOSCREEN:
+		D_PageDrawer();
 		break;
 	}
-	
+
 	// draw buffered stuff to screen
 	I_UpdateNoBlit ();
 	
@@ -299,6 +299,11 @@ void D_Display (void)
 	NetUpdate ();         // send out any new accumulation
 
 
+	// JGM flash PRESS START graphic any time not actually playing
+	if (((gamestate != GS_LEVEL) || demoplayback) && ((I_GetTime() & 16) == 0))
+		V_DrawPatchDirect(80, 40, W_CacheLumpName("PRSTART", PU_CACHE));
+
+	
 	// normal update
 	if (!wipe)
 	{
@@ -473,7 +478,7 @@ void D_DoomLoop (void)
 
 		// Update display, next frame, with current state.
 		if (screenvisible)
-			D_Display ();
+			D_Display();
 	}
 }
 
@@ -504,7 +509,7 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-	V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
+	V_DrawPatch(0, 0, W_CacheLumpName(pagename, PU_CACHE));
 }
 
 
