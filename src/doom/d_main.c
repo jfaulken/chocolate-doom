@@ -552,7 +552,7 @@ void D_DoAdvanceDemo (void)
 	else
 	    pagetic = 170;
 	gamestate = GS_DEMOSCREEN;
-	pagename = DEH_String("TITLEPIC");
+	pagename = DEH_String("DRUGS");
 	if ( gamemode == commercial )
 	  S_StartMusic(mus_dm2ttl);
 	else
@@ -1229,7 +1229,7 @@ void D_DoomMain (void)
 
     DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
-
+	
 #ifdef FEATURE_MULTIPLAYER
     //!
     // @category net
@@ -1433,6 +1433,17 @@ void D_DoomMain (void)
 
     W_CheckCorrectIWAD(doom);
 
+	// JGM always load aracde.wad
+	{
+		if (!M_FileExists("arcade.wad"))
+		{
+			I_Error("Can't find arcade.wad");
+			return -1;
+		}
+		printf(" adding arcade.wad\n");
+		W_AddFile("arcade.wad");
+	}
+	
     // Now that we've loaded the IWAD, we can figure out what gamemission
     // we're playing and which version of Vanilla Doom we need to emulate.
     D_IdentifyVersion();
