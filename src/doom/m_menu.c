@@ -1672,144 +1672,156 @@ boolean M_Responder (event_t* ev)
 		}
 	}
 
-	// Pop-up menu?
-	if (!menuactive)
+	// JGM any key when not playing will start a new game instead of showing menu
+	if ((gamestate != GS_LEVEL) || demoplayback)
 	{
-		if (key == key_menu_activate)
-		{
-			M_StartControlPanel ();
-			S_StartSound(NULL,sfx_swtchn);
-			return true;
-		}
-		return false;
-	}
-
-	// Keys usable within menu
-
-	if (key == key_menu_down)
-	{
-		// Move down to next item
-
-		do
-		{
-			if (itemOn+1 > currentMenu->numitems-1)
-				itemOn = 0;
-			else itemOn++;
-			S_StartSound(NULL,sfx_pstop);
-		} while(currentMenu->menuitems[itemOn].status==-1);
-
+		G_DeferedInitNew(sk_hard, 1, 1);
+		M_ClearMenus();
 		return true;
 	}
-	else if (key == key_menu_up)
-	{
-		// Move back up to previous item
-
-		do
-		{
-			if (!itemOn)
-				itemOn = currentMenu->numitems-1;
-			else itemOn--;
-			S_StartSound(NULL,sfx_pstop);
-		} while(currentMenu->menuitems[itemOn].status==-1);
-
-		return true;
-	}
-	else if (key == key_menu_left)
-	{
-		// Slide slider left
-
-		if (currentMenu->menuitems[itemOn].routine &&
-			currentMenu->menuitems[itemOn].status == 2)
-		{
-			S_StartSound(NULL,sfx_stnmov);
-			currentMenu->menuitems[itemOn].routine(0);
-		}
-		return true;
-	}
-	else if (key == key_menu_right)
-	{
-		// Slide slider right
-
-		if (currentMenu->menuitems[itemOn].routine &&
-			currentMenu->menuitems[itemOn].status == 2)
-		{
-			S_StartSound(NULL,sfx_stnmov);
-			currentMenu->menuitems[itemOn].routine(1);
-		}
-		return true;
-	}
-	else if (key == key_menu_forward)
-	{
-		// Activate menu item
-
-		if (currentMenu->menuitems[itemOn].routine &&
-			currentMenu->menuitems[itemOn].status)
-		{
-			currentMenu->lastOn = itemOn;
-			if (currentMenu->menuitems[itemOn].status == 2)
-			{
-				currentMenu->menuitems[itemOn].routine(1);      // right arrow
-				S_StartSound(NULL,sfx_stnmov);
-			}
-			else
-			{
-				currentMenu->menuitems[itemOn].routine(itemOn);
-				S_StartSound(NULL,sfx_pistol);
-			}
-		}
-		return true;
-	}
-	else if (key == key_menu_activate)
-	{
-		// Deactivate menu
-
-		currentMenu->lastOn = itemOn;
-		M_ClearMenus ();
-		S_StartSound(NULL,sfx_swtchx);
-		return true;
-	}
-	else if (key == key_menu_back)
-	{
-		// Go back to previous menu
-
-		currentMenu->lastOn = itemOn;
-		if (currentMenu->prevMenu)
-		{
-			currentMenu = currentMenu->prevMenu;
-			itemOn = currentMenu->lastOn;
-			S_StartSound(NULL,sfx_swtchn);
-		}
-		return true;
-	}
-
-	// Keyboard shortcut?
-	// Vanilla Doom has a weird behavior where it jumps to the scroll bars
-	// when the certain keys are pressed, so emulate this.
-
-	else if (ch != 0 || IsNullKey(key))
-	{
-		for (i = itemOn+1;i < currentMenu->numitems;i++)
-		{
-			if (currentMenu->menuitems[i].alphaKey == ch)
-			{
-				itemOn = i;
-				S_StartSound(NULL,sfx_pstop);
-				return true;
-			}
-		}
-
-		for (i = 0;i <= itemOn;i++)
-		{
-			if (currentMenu->menuitems[i].alphaKey == ch)
-			{
-				itemOn = i;
-				S_StartSound(NULL,sfx_pstop);
-				return true;
-			}
-		}
-	}
-
 	return false;
+
+	// JGM disable menu navigation code
+	// JGM keeping this code commented-out for now so I don't have to dig it
+	// JGM out of git later if we actually want to use menus for something
+	//	// Pop-up menu?
+	//	if (!menuactive)
+	//	{
+	//		if (key == key_menu_activate)
+	//		{
+	//			M_StartControlPanel ();
+	//			S_StartSound(NULL,sfx_swtchn);
+	//			return true;
+	//		}
+	//		return false;
+	//	}
+	//
+	//	// Keys usable within menu
+	//
+	//	if (key == key_menu_down)
+	//	{
+	//		// Move down to next item
+	//
+	//		do
+	//		{
+	//			if (itemOn+1 > currentMenu->numitems-1)
+	//				itemOn = 0;
+	//			else itemOn++;
+	//			S_StartSound(NULL,sfx_pstop);
+	//		} while(currentMenu->menuitems[itemOn].status==-1);
+	//
+	//		return true;
+	//	}
+	//	else if (key == key_menu_up)
+	//	{
+	//		// Move back up to previous item
+	//
+	//		do
+	//		{
+	//			if (!itemOn)
+	//				itemOn = currentMenu->numitems-1;
+	//			else itemOn--;
+	//			S_StartSound(NULL,sfx_pstop);
+	//		} while(currentMenu->menuitems[itemOn].status==-1);
+	//
+	//		return true;
+	//	}
+	//	else if (key == key_menu_left)
+	//	{
+	//		// Slide slider left
+	//
+	//		if (currentMenu->menuitems[itemOn].routine &&
+	//			currentMenu->menuitems[itemOn].status == 2)
+	//		{
+	//			S_StartSound(NULL,sfx_stnmov);
+	//			currentMenu->menuitems[itemOn].routine(0);
+	//		}
+	//		return true;
+	//	}
+	//	else if (key == key_menu_right)
+	//	{
+	//		// Slide slider right
+	//
+	//		if (currentMenu->menuitems[itemOn].routine &&
+	//			currentMenu->menuitems[itemOn].status == 2)
+	//		{
+	//			S_StartSound(NULL,sfx_stnmov);
+	//			currentMenu->menuitems[itemOn].routine(1);
+	//		}
+	//		return true;
+	//	}
+	//	else if (key == key_menu_forward)
+	//	{
+	//		// Activate menu item
+	//
+	//		if (currentMenu->menuitems[itemOn].routine &&
+	//			currentMenu->menuitems[itemOn].status)
+	//		{
+	//			currentMenu->lastOn = itemOn;
+	//			if (currentMenu->menuitems[itemOn].status == 2)
+	//			{
+	//				currentMenu->menuitems[itemOn].routine(1);      // right arrow
+	//				S_StartSound(NULL,sfx_stnmov);
+	//			}
+	//			else
+	//			{
+	//				currentMenu->menuitems[itemOn].routine(itemOn);
+	//				S_StartSound(NULL,sfx_pistol);
+	//			}
+	//		}
+	//		return true;
+	//	}
+	//	else if (key == key_menu_activate)
+	//	{
+	//		// Deactivate menu
+	//
+	//		currentMenu->lastOn = itemOn;
+	//		M_ClearMenus ();
+	//		S_StartSound(NULL,sfx_swtchx);
+	//		return true;
+	//	}
+	//	else if (key == key_menu_back)
+	//	{
+	//		// Go back to previous menu
+	//
+	//		currentMenu->lastOn = itemOn;
+	//		if (currentMenu->prevMenu)
+	//		{
+	//			currentMenu = currentMenu->prevMenu;
+	//			itemOn = currentMenu->lastOn;
+	//			S_StartSound(NULL,sfx_swtchn);
+	//		}
+	//		return true;
+	//	}
+	//
+	//	// Keyboard shortcut?
+	//	// Vanilla Doom has a weird behavior where it jumps to the scroll bars
+	//	// when the certain keys are pressed, so emulate this.
+	//
+	//	else if (ch != 0 || IsNullKey(key))
+	//	{
+	//		for (i = itemOn+1;i < currentMenu->numitems;i++)
+	//		{
+	//			if (currentMenu->menuitems[i].alphaKey == ch)
+	//			{
+	//				itemOn = i;
+	//				S_StartSound(NULL,sfx_pstop);
+	//				return true;
+	//			}
+	//		}
+	//
+	//		for (i = 0;i <= itemOn;i++)
+	//		{
+	//			if (currentMenu->menuitems[i].alphaKey == ch)
+	//			{
+	//				itemOn = i;
+	//				S_StartSound(NULL,sfx_pstop);
+	//				return true;
+	//			}
+	//		}
+	//	}
+	//
+	//	return false;
 }
 
 
@@ -1819,13 +1831,17 @@ boolean M_Responder (event_t* ev)
 //
 void M_StartControlPanel (void)
 {
-	// intro might call this repeatedly
-	if (menuactive)
-		return;
-	
-	menuactive = 1;
-	currentMenu = &MainDef;         // JDC
-	itemOn = currentMenu->lastOn;   // JDC
+	// JGM evidently this is the function that shows the menu
+	// JGM never show the menu
+	return;
+
+	//	// intro might call this repeatedly
+	//	if (menuactive)
+	//		return;
+	//
+	//	menuactive = 1;
+	//	currentMenu = &MainDef;         // JDC
+	//	itemOn = currentMenu->lastOn;   // JDC
 }
 
 // Display OPL debug messages - hack for GENMIDI development.
