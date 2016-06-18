@@ -13,9 +13,9 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Gamma correction LUT.
-//	Functions to draw patches (by post) directly to screen.
-//	Functions to blit a block to the screen.
+//      Gamma correction LUT.
+//      Functions to draw patches (by post) directly to screen.
+//      Functions to blit a block to the screen.
 //
 
 
@@ -31,7 +31,7 @@
 // VIDEO
 //
 
-#define CENTERY			(SCREENHEIGHT/2)
+#define CENTERY                 (SCREENHEIGHT/2)
 
 
 extern int dirtybox[4];
@@ -51,8 +51,8 @@ void V_Init (void);
 // Draw a block from the specified source screen to the screen.
 
 void V_CopyRect(int srcx, int srcy, byte *source,
-                int width, int height,
-                int destx, int desty);
+				int width, int height,
+				int destx, int desty);
 
 void V_DrawPatch(int x, int y, patch_t *patch);
 void V_DrawPatchFlipped(int x, int y, patch_t *patch);

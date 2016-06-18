@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Fixed point implementation.
+//      Fixed point implementation.
 //
 
 
@@ -32,10 +32,10 @@
 
 fixed_t
 FixedMul
-( fixed_t	a,
-  fixed_t	b )
+( fixed_t       a,
+  fixed_t       b )
 {
-    return ((int64_t) a * (int64_t) b) >> FRACBITS;
+	return ((int64_t) a * (int64_t) b) >> FRACBITS;
 }
 
 
@@ -46,17 +46,17 @@ FixedMul
 
 fixed_t FixedDiv(fixed_t a, fixed_t b)
 {
-    if ((abs(a) >> 14) >= abs(b))
-    {
-	return (a^b) < 0 ? INT_MIN : INT_MAX;
-    }
-    else
-    {
-	int64_t result;
+	if ((abs(a) >> 14) >= abs(b))
+	{
+		return (a^b) < 0 ? INT_MIN : INT_MAX;
+	}
+	else
+	{
+		int64_t result;
 
-	result = ((int64_t) a << FRACBITS) / b;
+		result = ((int64_t) a << FRACBITS) / b;
 
-	return (fixed_t) result;
-    }
+		return (fixed_t) result;
+	}
 }
 

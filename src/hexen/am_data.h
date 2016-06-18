@@ -36,15 +36,15 @@ mline_t player_arrow[] = {
 
 /*
 mline_t keysquare[] = {
-	{ { 0, 0 }, { R/4, -R/2 } },
-	{ { R/4, -R/2 }, { R/2, -R/2 } },
-	{ { R/2, -R/2 }, { R/2, R/2 } },
-	{ { R/2, R/2 }, { R/4, R/2 } },
-	{ { R/4, R/2 }, { 0, 0 } }, // handle part type thing
-	{ { 0, 0 }, { -R, 0 } }, // stem
-	{ { -R, 0 }, { -R, -R/2 } }, // end lockpick part
-	{ { -3*R/4, 0 }, { -3*R/4, -R/4 } }
-	};
+		{ { 0, 0 }, { R/4, -R/2 } },
+		{ { R/4, -R/2 }, { R/2, -R/2 } },
+		{ { R/2, -R/2 }, { R/2, R/2 } },
+		{ { R/2, R/2 }, { R/4, R/2 } },
+		{ { R/4, R/2 }, { 0, 0 } }, // handle part type thing
+		{ { 0, 0 }, { -R, 0 } }, // stem
+		{ { -R, 0 }, { -R, -R/2 } }, // end lockpick part
+		{ { -3*R/4, 0 }, { -3*R/4, -R/4 } }
+		};
 */
 
 /*mline_t player_arrow[] = {

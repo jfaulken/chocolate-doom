@@ -41,8 +41,8 @@
 // Frame flags:
 // handles maximum brightness (torches, muzzle flare, light sources)
 //
-#define FF_FULLBRIGHT	0x8000	// flag in thing->frame
-#define FF_FRAMEMASK	0x7fff
+#define FF_FULLBRIGHT   0x8000  // flag in thing->frame
+#define FF_FRAMEMASK    0x7fff
 
 
 
@@ -53,21 +53,21 @@
 //
 typedef enum
 {
-    ps_weapon,
-    ps_flash,
-    ps_targcenter,  // villsa [STRIFE]
-    ps_targleft,    // villsa [STRIFE]
-    ps_targright,   // villsa [STRIFE]
-    NUMPSPRITES
+	ps_weapon,
+	ps_flash,
+	ps_targcenter,  // villsa [STRIFE]
+	ps_targleft,    // villsa [STRIFE]
+	ps_targright,   // villsa [STRIFE]
+	NUMPSPRITES
 
 } psprnum_t;
 
 typedef struct
 {
-    state_t*	state;	// a NULL state means not active
-    int		tics;
-    fixed_t	sx;
-    fixed_t	sy;
+	state_t*    state;  // a NULL state means not active
+	int         tics;
+	fixed_t     sx;
+	fixed_t     sy;
 
 } pspdef_t;
 

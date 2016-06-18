@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Main program, simply calls D_DoomMain high level loop.
+//      Main program, simply calls D_DoomMain high level loop.
 //
 
 #include "config.h"
@@ -36,17 +36,17 @@ void D_DoomMain (void);
 
 int main(int argc, char **argv)
 {
-    // save arguments
+	// save arguments
 
-    myargc = argc;
-    myargv = argv;
+	myargc = argc;
+	myargv = argv;
 
-    M_FindResponseFile();
+	M_FindResponseFile();
 
-    // start doom
+	// start doom
 
-    D_DoomMain ();
+	D_DoomMain ();
 
-    return 0;
+	return 0;
 }
 

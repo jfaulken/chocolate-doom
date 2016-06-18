@@ -50,7 +50,7 @@
 /*
 ==============================================================================
 
-					INTERNAL MAP TYPES
+										INTERNAL MAP TYPES
 
 ==============================================================================
 */
@@ -59,141 +59,141 @@
 
 typedef struct
 {
-    fixed_t x, y;
+	fixed_t x, y;
 } vertex_t;
 
 struct line_s;
 
 typedef struct
 {
-    fixed_t floorheight, ceilingheight;
-    short floorpic, ceilingpic;
-    short lightlevel;
-    short special, tag;
+	fixed_t floorheight, ceilingheight;
+	short floorpic, ceilingpic;
+	short lightlevel;
+	short special, tag;
 
-    int soundtraversed;         // 0 = untraversed, 1,2 = sndlines -1
-    mobj_t *soundtarget;        // thing that made a sound (or null)
-    seqtype_t seqType;          // stone, metal, heavy, etc...
+	int soundtraversed;         // 0 = untraversed, 1,2 = sndlines -1
+	mobj_t *soundtarget;        // thing that made a sound (or null)
+	seqtype_t seqType;          // stone, metal, heavy, etc...
 
-    int blockbox[4];            // mapblock bounding box for height changes
-    degenmobj_t soundorg;       // for any sounds played by the sector
-    int validcount;             // if == validcount, already checked
-    mobj_t *thinglist;          // list of mobjs in sector
-    void *specialdata;          // thinker_t for reversable actions
-    int linecount;
-    struct line_s **lines;      // [linecount] size
+	int blockbox[4];            // mapblock bounding box for height changes
+	degenmobj_t soundorg;       // for any sounds played by the sector
+	int validcount;             // if == validcount, already checked
+	mobj_t *thinglist;          // list of mobjs in sector
+	void *specialdata;          // thinker_t for reversable actions
+	int linecount;
+	struct line_s **lines;      // [linecount] size
 } sector_t;
 
 typedef struct
 {
-    fixed_t textureoffset;      // add this to the calculated texture col
-    fixed_t rowoffset;          // add this to the calculated texture top
-    short toptexture, bottomtexture, midtexture;
-    sector_t *sector;
+	fixed_t textureoffset;      // add this to the calculated texture col
+	fixed_t rowoffset;          // add this to the calculated texture top
+	short toptexture, bottomtexture, midtexture;
+	sector_t *sector;
 } side_t;
 
 typedef enum
 {
-    ST_HORIZONTAL,
-    ST_VERTICAL,
-    ST_POSITIVE,
-    ST_NEGATIVE
+	ST_HORIZONTAL,
+	ST_VERTICAL,
+	ST_POSITIVE,
+	ST_NEGATIVE
 } slopetype_t;
 
 /*
 typedef struct line_s
 {
-	vertex_t        *v1, *v2;
-	fixed_t         dx,dy;                          // v2 - v1 for side checking
-	short           flags;
-	short           special, tag;
-	short           sidenum[2];                     // sidenum[1] will be -1 if one sided
-	fixed_t         bbox[4];
-	slopetype_t     slopetype;                      // to aid move clipping
-	sector_t        *frontsector, *backsector;
-	int                     validcount;                     // if == validcount, already checked
-	void            *specialdata;           // thinker_t for reversable actions
+		vertex_t        *v1, *v2;
+		fixed_t         dx,dy;                          // v2 - v1 for side checking
+		short           flags;
+		short           special, tag;
+		short           sidenum[2];                     // sidenum[1] will be -1 if one sided
+		fixed_t         bbox[4];
+		slopetype_t     slopetype;                      // to aid move clipping
+		sector_t        *frontsector, *backsector;
+		int                     validcount;                     // if == validcount, already checked
+		void            *specialdata;           // thinker_t for reversable actions
 } line_t;
 */
 
 typedef struct line_s
 {
-    vertex_t *v1;
-    vertex_t *v2;
-    fixed_t dx;
-    fixed_t dy;
-    short flags;
-    byte special;
-    byte arg1;
-    byte arg2;
-    byte arg3;
-    byte arg4;
-    byte arg5;
-    short sidenum[2];
-    fixed_t bbox[4];
-    slopetype_t slopetype;
-    sector_t *frontsector;
-    sector_t *backsector;
-    int validcount;
-    void *specialdata;
+	vertex_t *v1;
+	vertex_t *v2;
+	fixed_t dx;
+	fixed_t dy;
+	short flags;
+	byte special;
+	byte arg1;
+	byte arg2;
+	byte arg3;
+	byte arg4;
+	byte arg5;
+	short sidenum[2];
+	fixed_t bbox[4];
+	slopetype_t slopetype;
+	sector_t *frontsector;
+	sector_t *backsector;
+	int validcount;
+	void *specialdata;
 } line_t;
 
 typedef struct
 {
-    vertex_t *v1, *v2;
-    fixed_t offset;
-    angle_t angle;
-    side_t *sidedef;
-    line_t *linedef;
-    sector_t *frontsector;
-    sector_t *backsector;       // NULL for one sided lines
+	vertex_t *v1, *v2;
+	fixed_t offset;
+	angle_t angle;
+	side_t *sidedef;
+	line_t *linedef;
+	sector_t *frontsector;
+	sector_t *backsector;       // NULL for one sided lines
 } seg_t;
 
 // ===== Polyobj data =====
 typedef struct
 {
-    int numsegs;
-    seg_t **segs;
-    degenmobj_t startSpot;
-    vertex_t *originalPts;      // used as the base for the rotations
-    vertex_t *prevPts;          // use to restore the old point values
-    angle_t angle;
-    int tag;                    // reference tag assigned in HereticEd
-    int bbox[4];
-    int validcount;
-    boolean crush;              // should the polyobj attempt to crush mobjs?
-    int seqType;
-    fixed_t size;               // polyobj size (area of POLY_AREAUNIT == size of FRACUNIT)
-    void *specialdata;          // pointer a thinker, if the poly is moving
+	int numsegs;
+	seg_t **segs;
+	degenmobj_t startSpot;
+	vertex_t *originalPts;      // used as the base for the rotations
+	vertex_t *prevPts;          // use to restore the old point values
+	angle_t angle;
+	int tag;                    // reference tag assigned in HereticEd
+	int bbox[4];
+	int validcount;
+	boolean crush;              // should the polyobj attempt to crush mobjs?
+	int seqType;
+	fixed_t size;               // polyobj size (area of POLY_AREAUNIT == size of FRACUNIT)
+	void *specialdata;          // pointer a thinker, if the poly is moving
 } polyobj_t;
 
 typedef struct polyblock_s
 {
-    polyobj_t *polyobj;
-    struct polyblock_s *prev;
-    struct polyblock_s *next;
+	polyobj_t *polyobj;
+	struct polyblock_s *prev;
+	struct polyblock_s *next;
 } polyblock_t;
 
 typedef struct subsector_s
 {
-    sector_t *sector;
-    short numlines;
-    short firstline;
-    polyobj_t *poly;
+	sector_t *sector;
+	short numlines;
+	short firstline;
+	polyobj_t *poly;
 } subsector_t;
 
 typedef struct
 {
-    fixed_t x, y, dx, dy;       // partition line
-    fixed_t bbox[2][4];         // bounding box for each child
-    unsigned short children[2]; // if NF_SUBSECTOR its a subsector
+	fixed_t x, y, dx, dy;       // partition line
+	fixed_t bbox[2][4];         // bounding box for each child
+	unsigned short children[2]; // if NF_SUBSECTOR its a subsector
 } node_t;
 
 
 /*
 ==============================================================================
 
-						OTHER TYPES
+												OTHER TYPES
 
 ==============================================================================
 */
@@ -205,31 +205,31 @@ typedef byte lighttable_t;      // this could be wider for >8 bit display
 
 typedef struct
 {
-    fixed_t height;
-    int picnum;
-    int lightlevel;
-    int special;
-    int minx, maxx;
-    byte pad1;                  // leave pads for [minx-1]/[maxx+1]
-    byte top[SCREENWIDTH];
-    byte pad2;
-    byte pad3;
-    byte bottom[SCREENWIDTH];
-    byte pad4;
+	fixed_t height;
+	int picnum;
+	int lightlevel;
+	int special;
+	int minx, maxx;
+	byte pad1;                  // leave pads for [minx-1]/[maxx+1]
+	byte top[SCREENWIDTH];
+	byte pad2;
+	byte pad3;
+	byte bottom[SCREENWIDTH];
+	byte pad4;
 } visplane_t;
 
 typedef struct drawseg_s
 {
-    seg_t *curline;
-    int x1, x2;
-    fixed_t scale1, scale2, scalestep;
-    int silhouette;             // 0=none, 1=bottom, 2=top, 3=both
-    fixed_t bsilheight;         // don't clip sprites above this
-    fixed_t tsilheight;         // don't clip sprites below this
+	seg_t *curline;
+	int x1, x2;
+	fixed_t scale1, scale2, scalestep;
+	int silhouette;             // 0=none, 1=bottom, 2=top, 3=both
+	fixed_t bsilheight;         // don't clip sprites above this
+	fixed_t tsilheight;         // don't clip sprites below this
 // pointers to lists for sprite clipping
-    short *sprtopclip;          // adjusted so [x1] is first value
-    short *sprbottomclip;       // adjusted so [x1] is first value
-    short *maskedtexturecol;    // adjusted so [x1] is first value
+	short *sprtopclip;          // adjusted so [x1] is first value
+	short *sprbottomclip;       // adjusted so [x1] is first value
+	short *maskedtexturecol;    // adjusted so [x1] is first value
 } drawseg_t;
 
 #define SIL_NONE        0
@@ -242,20 +242,20 @@ typedef struct drawseg_s
 // A vissprite_t is a thing that will be drawn during a refresh
 typedef struct vissprite_s
 {
-    struct vissprite_s *prev, *next;
-    int x1, x2;
-    fixed_t gx, gy;             // for line side calculation
-    fixed_t gz, gzt;            // global bottom / top for silhouette clipping
-    fixed_t startfrac;          // horizontal position of x1
-    fixed_t scale;
-    fixed_t xiscale;            // negative if flipped
-    fixed_t texturemid;
-    int patch;
-    lighttable_t *colormap;
-    int mobjflags;              // for color translation and shadow draw
-    boolean psprite;            // true if psprite
-    int class;                  // player class (used in translation)
-    fixed_t floorclip;
+	struct vissprite_s *prev, *next;
+	int x1, x2;
+	fixed_t gx, gy;             // for line side calculation
+	fixed_t gz, gzt;            // global bottom / top for silhouette clipping
+	fixed_t startfrac;          // horizontal position of x1
+	fixed_t scale;
+	fixed_t xiscale;            // negative if flipped
+	fixed_t texturemid;
+	int patch;
+	lighttable_t *colormap;
+	int mobjflags;              // for color translation and shadow draw
+	boolean psprite;            // true if psprite
+	int class;                  // player class (used in translation)
+	fixed_t floorclip;
 } vissprite_t;
 
 
@@ -271,15 +271,15 @@ extern visplane_t *floorplane, *ceilingplane;
 
 typedef struct
 {
-    boolean rotate;             // if false use 0 for any position
-    short lump[8];              // lump to use for view angles 0-7
-    byte flip[8];               // flip (1 = flip) to use for view angles 0-7
+	boolean rotate;             // if false use 0 for any position
+	short lump[8];              // lump to use for view angles 0-7
+	byte flip[8];               // flip (1 = flip) to use for view angles 0-7
 } spriteframe_t;
 
 typedef struct
 {
-    int numframes;
-    spriteframe_t *spriteframes;
+	int numframes;
+	spriteframe_t *spriteframes;
 } spritedef_t;
 
 extern spritedef_t *sprites;
@@ -423,7 +423,7 @@ void R_MakeSpans(int x, int t1, int b1, int t2, int b2);
 void R_DrawPlanes(void);
 
 visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
-                        int special);
+						int special);
 visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop);
 
 

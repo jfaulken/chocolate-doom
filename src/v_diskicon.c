@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Disk load indicator.
+//      Disk load indicator.
 //
 
 #include "doomtype.h"
@@ -46,97 +46,97 @@ static size_t recent_bytes_read = 0;
 static boolean disk_drawn;
 
 static void CopyRegion(byte *dest, int dest_pitch,
-                       byte *src, int src_pitch,
-                       int w, int h)
+					   byte *src, int src_pitch,
+					   int w, int h)
 {
-    byte *s, *d;
-    int y;
+	byte *s, *d;
+	int y;
 
-    s = src; d = dest;
-    for (y = 0; y < h; ++y)
-    {
-        memcpy(d, s, w);
-        s += src_pitch;
-        d += dest_pitch;
-    }
+	s = src; d = dest;
+	for (y = 0; y < h; ++y)
+	{
+		memcpy(d, s, w);
+		s += src_pitch;
+		d += dest_pitch;
+	}
 }
 
 static void SaveDiskData(char *disk_lump, int xoffs, int yoffs)
 {
-    byte *tmpscreen;
-    patch_t *disk;
+	byte *tmpscreen;
+	patch_t *disk;
 
-    // Allocate a complete temporary screen where we'll draw the patch.
-    tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-    memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT);
-    V_UseBuffer(tmpscreen);
+	// Allocate a complete temporary screen where we'll draw the patch.
+	tmpscreen = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+	memset(tmpscreen, 0, SCREENWIDTH * SCREENHEIGHT);
+	V_UseBuffer(tmpscreen);
 
-    // Buffer where we'll save the disk data.
-    disk_data = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
+	// Buffer where we'll save the disk data.
+	disk_data = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
 
-    // Draw the patch and save the result to disk_data.
-    disk = W_CacheLumpName(disk_lump, PU_STATIC);
-    V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
-    CopyRegion(disk_data, LOADING_DISK_W,
-               tmpscreen + yoffs * SCREENWIDTH + xoffs, SCREENWIDTH,
-               LOADING_DISK_W, LOADING_DISK_H);
-    W_ReleaseLumpName(disk_lump);
+	// Draw the patch and save the result to disk_data.
+	disk = W_CacheLumpName(disk_lump, PU_STATIC);
+	V_DrawPatch(loading_disk_xoffs, loading_disk_yoffs, disk);
+	CopyRegion(disk_data, LOADING_DISK_W,
+			   tmpscreen + yoffs * SCREENWIDTH + xoffs, SCREENWIDTH,
+			   LOADING_DISK_W, LOADING_DISK_H);
+	W_ReleaseLumpName(disk_lump);
 
-    V_RestoreBuffer();
-    Z_Free(tmpscreen);
+	V_RestoreBuffer();
+	Z_Free(tmpscreen);
 }
 
 void V_EnableLoadingDisk(char *lump_name, int xoffs, int yoffs)
 {
-    loading_disk_xoffs = xoffs;
-    loading_disk_yoffs = yoffs;
+	loading_disk_xoffs = xoffs;
+	loading_disk_yoffs = yoffs;
 
-    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC,
-                                NULL);
-    SaveDiskData(lump_name, xoffs, yoffs);
+	saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC,
+								NULL);
+	SaveDiskData(lump_name, xoffs, yoffs);
 }
 
 void V_BeginRead(size_t nbytes)
 {
-    recent_bytes_read += nbytes;
+	recent_bytes_read += nbytes;
 }
 
 static byte *DiskRegionPointer(void)
 {
-    return I_VideoBuffer
-         + loading_disk_yoffs * SCREENWIDTH
-         + loading_disk_xoffs;
+	return I_VideoBuffer
+		 + loading_disk_yoffs * SCREENWIDTH
+		 + loading_disk_xoffs;
 }
 
 void V_DrawDiskIcon(void)
 {
-    if (disk_data != NULL && recent_bytes_read > diskicon_threshold)
-    {
-        // Save the background behind the disk before we draw it.
-        CopyRegion(saved_background, LOADING_DISK_W,
-                   DiskRegionPointer(), SCREENWIDTH,
-                   LOADING_DISK_W, LOADING_DISK_H);
+	if (disk_data != NULL && recent_bytes_read > diskicon_threshold)
+	{
+		// Save the background behind the disk before we draw it.
+		CopyRegion(saved_background, LOADING_DISK_W,
+				   DiskRegionPointer(), SCREENWIDTH,
+				   LOADING_DISK_W, LOADING_DISK_H);
 
-        // Write the disk to the screen buffer.
-        CopyRegion(DiskRegionPointer(), SCREENWIDTH,
-                   disk_data, LOADING_DISK_W,
-                   LOADING_DISK_W, LOADING_DISK_H);
-        disk_drawn = true;
-    }
+		// Write the disk to the screen buffer.
+		CopyRegion(DiskRegionPointer(), SCREENWIDTH,
+				   disk_data, LOADING_DISK_W,
+				   LOADING_DISK_W, LOADING_DISK_H);
+		disk_drawn = true;
+	}
 
-    recent_bytes_read = 0;
+	recent_bytes_read = 0;
 }
 
 void V_RestoreDiskBackground(void)
 {
-    if (disk_drawn)
-    {
-        // Restore the background.
-        CopyRegion(DiskRegionPointer(), SCREENWIDTH,
-                   saved_background, LOADING_DISK_W,
-                   LOADING_DISK_W, LOADING_DISK_H);
+	if (disk_drawn)
+	{
+		// Restore the background.
+		CopyRegion(DiskRegionPointer(), SCREENWIDTH,
+				   saved_background, LOADING_DISK_W,
+				   LOADING_DISK_W, LOADING_DISK_H);
 
-        disk_drawn = false;
-    }
+		disk_drawn = false;
+	}
 }
 

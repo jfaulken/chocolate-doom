@@ -34,9 +34,9 @@
 //
 // sky mapping
 //
-int			skyflatnum;
-int			skytexture;
-int			skytexturemid;
+int                     skyflatnum;
+int                     skytexture;
+int                     skytexturemid;
 
 
 
@@ -46,9 +46,9 @@ int			skytexturemid;
 //
 void R_InitSkyMap (void)
 {
-    // haleyjd 10/03/10: [STRIFE] Sky is set here, not in G_DoLoadLevel.
-    // Also skytexturemid changed from 100 to 199.
-    skyflatnum = R_FlatNumForName ( SKYFLATNAME );
-    skytexturemid = 199*FRACUNIT;
+	// haleyjd 10/03/10: [STRIFE] Sky is set here, not in G_DoLoadLevel.
+	// Also skytexturemid changed from 100 to 199.
+	skyflatnum = R_FlatNumForName ( SKYFLATNAME );
+	skytexturemid = 199*FRACUNIT;
 }
 

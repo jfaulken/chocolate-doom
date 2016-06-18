@@ -44,8 +44,8 @@ extern int dialogshowtext;
 do { \
   int obj_ln  = W_CheckNumForName(DEH_String(x)); \
   if(obj_ln > minlumpnum) \
-    M_StringCopy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), \
-                 OBJECTIVE_LEN);\
+	M_StringCopy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), \
+				 OBJECTIVE_LEN);\
 } while(0)
 
 // haleyjd - voice and objective in one
@@ -54,35 +54,35 @@ do { \
   int obj_ln = W_CheckNumForName(DEH_String(log)); \
   I_StartVoice(DEH_String(voice)); \
   if(obj_ln > minlumpnum) \
-    M_StringCopy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), \
-                 OBJECTIVE_LEN);\
+	M_StringCopy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), \
+				 OBJECTIVE_LEN);\
 } while(0)
 
 typedef struct mapdlgchoice_s
 {
-    int  giveitem;                      // item given when successful
-    int  needitems[MDLG_MAXITEMS];      // item needed for success
-    int  needamounts[MDLG_MAXITEMS];    // amount of items needed
-    char text[MDLG_CHOICELEN];          // normal text
-    char textok[MDLG_MSGLEN];           // message given on success
-    int next;                           // next dialog?
-    int objective;                      // ???
-    char textno[MDLG_MSGLEN];           // message given on failure
+	int  giveitem;                      // item given when successful
+	int  needitems[MDLG_MAXITEMS];      // item needed for success
+	int  needamounts[MDLG_MAXITEMS];    // amount of items needed
+	char text[MDLG_CHOICELEN];          // normal text
+	char textok[MDLG_MSGLEN];           // message given on success
+	int next;                           // next dialog?
+	int objective;                      // ???
+	char textno[MDLG_MSGLEN];           // message given on failure
 } mapdlgchoice_t;
 
 typedef struct mapdialog_s
 {
-    int speakerid;                      // script ID# for mobjtype that will use this dialog
-    int dropitem;                       // item to drop if that thingtype is killed
-    int checkitem[MDLG_MAXITEMS];       // item(s) needed to see this dialog
-    int jumptoconv;                     // conversation to jump to when... ?
-    char name[MDLG_NAMELEN];            // name of speaker
-    char voice[MDLG_LUMPLEN];           // voice file to play
-    char backpic[MDLG_LUMPLEN];         // backdrop pic for character, if any
-    char text[MDLG_TEXTLEN];            // main message text
-    
-    // options that this dialog gives the player
-    mapdlgchoice_t choices[MDLG_MAXCHOICES];
+	int speakerid;                      // script ID# for mobjtype that will use this dialog
+	int dropitem;                       // item to drop if that thingtype is killed
+	int checkitem[MDLG_MAXITEMS];       // item(s) needed to see this dialog
+	int jumptoconv;                     // conversation to jump to when... ?
+	char name[MDLG_NAMELEN];            // name of speaker
+	char voice[MDLG_LUMPLEN];           // voice file to play
+	char backpic[MDLG_LUMPLEN];         // backdrop pic for character, if any
+	char text[MDLG_TEXTLEN];            // main message text
+	
+	// options that this dialog gives the player
+	mapdlgchoice_t choices[MDLG_MAXCHOICES];
 } mapdialog_t;
 
 void         P_DialogLoad(void);

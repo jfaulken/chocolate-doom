@@ -59,32 +59,32 @@ char character_name[CHARACTER_NAME_LEN]; // Name of "character" for saveslot
 //
 void ClearTmp(void)
 {
-    DIR *sp2dir = NULL;
-    struct dirent *f = NULL;
+	DIR *sp2dir = NULL;
+	struct dirent *f = NULL;
 
-    if(savepathtemp == NULL)
-        I_Error("you fucked up savedir man!");
+	if(savepathtemp == NULL)
+		I_Error("you fucked up savedir man!");
 
-    if(!(sp2dir = opendir(savepathtemp)))
-        I_Error("ClearTmp: Couldn't open dir %s", savepathtemp);
+	if(!(sp2dir = opendir(savepathtemp)))
+		I_Error("ClearTmp: Couldn't open dir %s", savepathtemp);
 
-    while((f = readdir(sp2dir)))
-    {
-        char *filepath = NULL;
+	while((f = readdir(sp2dir)))
+	{
+		char *filepath = NULL;
 
-        // haleyjd: skip "." and ".." without assuming they're the
-        // first two entries like the original code did.
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
+		// haleyjd: skip "." and ".." without assuming they're the
+		// first two entries like the original code did.
+		if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
+			continue;
 
-        // haleyjd: use M_SafeFilePath, not sprintf
-        filepath = M_SafeFilePath(savepathtemp, f->d_name);
-        remove(filepath);
+		// haleyjd: use M_SafeFilePath, not sprintf
+		filepath = M_SafeFilePath(savepathtemp, f->d_name);
+		remove(filepath);
 
-        Z_Free(filepath);
-    }
+		Z_Free(filepath);
+	}
 
-    closedir(sp2dir);
+	closedir(sp2dir);
 }
 
 //
@@ -94,30 +94,30 @@ void ClearTmp(void)
 //
 void ClearSlot(void)
 {
-    DIR *spdir = NULL;
-    struct dirent *f = NULL;
+	DIR *spdir = NULL;
+	struct dirent *f = NULL;
 
-    if(savepath == NULL)
-        I_Error("userdir is fucked up man!");
+	if(savepath == NULL)
+		I_Error("userdir is fucked up man!");
 
-    if(!(spdir = opendir(savepath)))
-        I_Error("ClearSlot: Couldn't open dir %s", savepath);
+	if(!(spdir = opendir(savepath)))
+		I_Error("ClearSlot: Couldn't open dir %s", savepath);
 
-    while((f = readdir(spdir)))
-    {
-        char *filepath = NULL;
+	while((f = readdir(spdir)))
+	{
+		char *filepath = NULL;
 
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
-        
-        // haleyjd: use M_SafeFilePath, not sprintf
-        filepath = M_SafeFilePath(savepath, f->d_name);
-        remove(filepath);
+		if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
+			continue;
+		
+		// haleyjd: use M_SafeFilePath, not sprintf
+		filepath = M_SafeFilePath(savepath, f->d_name);
+		remove(filepath);
 
-        Z_Free(filepath);
-    }
+		Z_Free(filepath);
+	}
 
-    closedir(spdir);
+	closedir(spdir);
 }
 
 //
@@ -127,37 +127,37 @@ void ClearSlot(void)
 //
 void FromCurr(void)
 {
-    DIR *sp2dir = NULL;
-    struct dirent *f = NULL;
+	DIR *sp2dir = NULL;
+	struct dirent *f = NULL;
 
-    if(!(sp2dir = opendir(savepathtemp)))
-        I_Error("FromCurr: Couldn't open dir %s", savepathtemp);
+	if(!(sp2dir = opendir(savepathtemp)))
+		I_Error("FromCurr: Couldn't open dir %s", savepathtemp);
 
-    while((f = readdir(sp2dir)))
-    {
-        byte *filebuffer  = NULL;
-        int   filelen     = 0;
-        char *srcfilename = NULL;
-        char *dstfilename = NULL;
+	while((f = readdir(sp2dir)))
+	{
+		byte *filebuffer  = NULL;
+		int   filelen     = 0;
+		char *srcfilename = NULL;
+		char *dstfilename = NULL;
 
-        // haleyjd: skip "." and ".." without assuming they're the
-        // first two entries like the original code did.
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
+		// haleyjd: skip "." and ".." without assuming they're the
+		// first two entries like the original code did.
+		if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
+			continue;
 
-        // haleyjd: use M_SafeFilePath, NOT sprintf.
-        srcfilename = M_SafeFilePath(savepathtemp, f->d_name);
-        dstfilename = M_SafeFilePath(savepath,     f->d_name);
+		// haleyjd: use M_SafeFilePath, NOT sprintf.
+		srcfilename = M_SafeFilePath(savepathtemp, f->d_name);
+		dstfilename = M_SafeFilePath(savepath,     f->d_name);
 
-        filelen = M_ReadFile(srcfilename, &filebuffer);
-        M_WriteFile(dstfilename, filebuffer, filelen);
+		filelen = M_ReadFile(srcfilename, &filebuffer);
+		M_WriteFile(dstfilename, filebuffer, filelen);
 
-        Z_Free(filebuffer);
-        Z_Free(srcfilename);
-        Z_Free(dstfilename);
-    }
+		Z_Free(filebuffer);
+		Z_Free(srcfilename);
+		Z_Free(dstfilename);
+	}
 
-    closedir(sp2dir);
+	closedir(sp2dir);
 }
 
 //
@@ -167,39 +167,39 @@ void FromCurr(void)
 //
 void ToCurr(void)
 {
-    DIR *spdir = NULL;
-    struct dirent *f = NULL;
+	DIR *spdir = NULL;
+	struct dirent *f = NULL;
 
-    ClearTmp();
+	ClearTmp();
 
-    // BUG: Rogue copypasta'd this error message, which is why we don't know
-    // the real original name of this function.
-    if(!(spdir = opendir(savepath)))
-        I_Error("ClearSlot: Couldn't open dir %s", savepath);
+	// BUG: Rogue copypasta'd this error message, which is why we don't know
+	// the real original name of this function.
+	if(!(spdir = opendir(savepath)))
+		I_Error("ClearSlot: Couldn't open dir %s", savepath);
 
-    while((f = readdir(spdir)))
-    {
-        byte *filebuffer  = NULL;
-        int   filelen     = 0;
-        char *srcfilename = NULL;
-        char *dstfilename = NULL;
+	while((f = readdir(spdir)))
+	{
+		byte *filebuffer  = NULL;
+		int   filelen     = 0;
+		char *srcfilename = NULL;
+		char *dstfilename = NULL;
 
-        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
-            continue;
+		if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
+			continue;
 
-        // haleyjd: use M_SafeFilePath, NOT sprintf.
-        srcfilename = M_SafeFilePath(savepath,     f->d_name);
-        dstfilename = M_SafeFilePath(savepathtemp, f->d_name);
+		// haleyjd: use M_SafeFilePath, NOT sprintf.
+		srcfilename = M_SafeFilePath(savepath,     f->d_name);
+		dstfilename = M_SafeFilePath(savepathtemp, f->d_name);
 
-        filelen = M_ReadFile(srcfilename, &filebuffer);
-        M_WriteFile(dstfilename, filebuffer, filelen);
+		filelen = M_ReadFile(srcfilename, &filebuffer);
+		M_WriteFile(dstfilename, filebuffer, filelen);
 
-        Z_Free(filebuffer);
-        Z_Free(srcfilename);
-        Z_Free(dstfilename);
-    }
+		Z_Free(filebuffer);
+		Z_Free(srcfilename);
+		Z_Free(dstfilename);
+	}
 
-    closedir(spdir);
+	closedir(spdir);
 }
 
 //
@@ -209,26 +209,26 @@ void ToCurr(void)
 //
 void M_SaveMoveMapToHere(void)
 {
-    char *mapsave  = NULL;
-    char *heresave = NULL;
-    char tmpnum[33];
+	char *mapsave  = NULL;
+	char *heresave = NULL;
+	char tmpnum[33];
 
-    // haleyjd: no itoa available...
-    M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
+	// haleyjd: no itoa available...
+	M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
-    // haleyjd: use M_SafeFilePath, not sprintf
-    mapsave  = M_SafeFilePath(savepath, tmpnum);
-    heresave = M_SafeFilePath(savepath, "here");
+	// haleyjd: use M_SafeFilePath, not sprintf
+	mapsave  = M_SafeFilePath(savepath, tmpnum);
+	heresave = M_SafeFilePath(savepath, "here");
 
-    // haleyjd: use M_FileExists, not access
-    if(M_FileExists(mapsave))
-    {
-        remove(heresave);
-        rename(mapsave, heresave);
-    }
+	// haleyjd: use M_FileExists, not access
+	if(M_FileExists(mapsave))
+	{
+		remove(heresave);
+		rename(mapsave, heresave);
+	}
 
-    Z_Free(mapsave);
-    Z_Free(heresave);
+	Z_Free(mapsave);
+	Z_Free(heresave);
 }
 
 //
@@ -238,24 +238,24 @@ void M_SaveMoveMapToHere(void)
 //
 void M_SaveMoveHereToMap(void)
 {
-    char *mapsave  = NULL;
-    char *heresave = NULL;
-    char tmpnum[33];
+	char *mapsave  = NULL;
+	char *heresave = NULL;
+	char tmpnum[33];
 
-    // haleyjd: no itoa available...
-    M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
+	// haleyjd: no itoa available...
+	M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
-    mapsave  = M_SafeFilePath(savepathtemp, tmpnum);
-    heresave = M_SafeFilePath(savepathtemp, "here");
+	mapsave  = M_SafeFilePath(savepathtemp, tmpnum);
+	heresave = M_SafeFilePath(savepathtemp, "here");
 
-    if(M_FileExists(heresave))
-    {
-        remove(mapsave);
-        rename(heresave, mapsave);
-    }
+	if(M_FileExists(heresave))
+	{
+		remove(mapsave);
+		rename(heresave, mapsave);
+	}
 
-    Z_Free(mapsave);
-    Z_Free(heresave);
+	Z_Free(mapsave);
+	Z_Free(heresave);
 }
 
 //
@@ -265,15 +265,15 @@ void M_SaveMoveHereToMap(void)
 //
 boolean M_SaveMisObj(const char *path)
 {
-    boolean result;
-    char *destpath = NULL;
+	boolean result;
+	char *destpath = NULL;
 
-    // haleyjd 20110210: use M_SafeFilePath, not sprintf
-    destpath = M_SafeFilePath(path, "mis_obj");
-    result   = M_WriteFile(destpath, mission_objective, OBJECTIVE_LEN);
+	// haleyjd 20110210: use M_SafeFilePath, not sprintf
+	destpath = M_SafeFilePath(path, "mis_obj");
+	result   = M_WriteFile(destpath, mission_objective, OBJECTIVE_LEN);
 
-    Z_Free(destpath);
-    return result;
+	Z_Free(destpath);
+	return result;
 }
 
 //
@@ -283,19 +283,19 @@ boolean M_SaveMisObj(const char *path)
 //
 void M_ReadMisObj(void)
 {
-    FILE *f = NULL;
-    char *srcpath = NULL;
+	FILE *f = NULL;
+	char *srcpath = NULL;
 
-    // haleyjd: use M_SafeFilePath, not sprintf
-    srcpath = M_SafeFilePath(savepathtemp, "mis_obj");
+	// haleyjd: use M_SafeFilePath, not sprintf
+	srcpath = M_SafeFilePath(savepathtemp, "mis_obj");
 
-    if((f = fopen(srcpath, "rb")))
-    {
-        fread(mission_objective, 1, OBJECTIVE_LEN, f);
-        fclose(f);
-    }
+	if((f = fopen(srcpath, "rb")))
+	{
+		fread(mission_objective, 1, OBJECTIVE_LEN, f);
+		fclose(f);
+	}
 
-    Z_Free(srcpath);
+	Z_Free(srcpath);
 }
 
 //=============================================================================
@@ -318,7 +318,7 @@ void M_ReadMisObj(void)
 //
 void *M_Calloc(size_t n1, size_t n2)
 {
-    return (n1 *= n2) ? memset(Z_Malloc(n1, PU_STATIC, NULL), 0, n1) : NULL;
+	return (n1 *= n2) ? memset(Z_Malloc(n1, PU_STATIC, NULL), 0, n1) : NULL;
 }
 
 //
@@ -340,37 +340,37 @@ void *M_Calloc(size_t n1, size_t n2)
 //
 int M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...)
 {
-    va_list args;
-    size_t len = extra;
+	va_list args;
+	size_t len = extra;
 
-    if(numstrs < 1)
-        I_Error("M_StringAlloc: invalid input\n");
+	if(numstrs < 1)
+		I_Error("M_StringAlloc: invalid input\n");
 
-    len += strlen(str1);
+	len += strlen(str1);
 
-    --numstrs;
+	--numstrs;
 
-    if(numstrs != 0)
-    {   
-        va_start(args, str1);
+	if(numstrs != 0)
+	{   
+		va_start(args, str1);
 
-        while(numstrs != 0)
-        {
-            const char *argstr = va_arg(args, const char *);
+		while(numstrs != 0)
+		{
+			const char *argstr = va_arg(args, const char *);
 
-            len += strlen(argstr);
+			len += strlen(argstr);
 
-            --numstrs;
-        }
+			--numstrs;
+		}
 
-        va_end(args);
-    }
+		va_end(args);
+	}
 
-    ++len;
+	++len;
 
-    *str = (char *)(M_Calloc(1, len));
+	*str = (char *)(M_Calloc(1, len));
 
-    return len;
+	return len;
 }
 
 //
@@ -387,24 +387,24 @@ int M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...)
 //
 void M_NormalizeSlashes(char *str)
 {
-    char *p;
+	char *p;
    
-    // Convert all slashes/backslashes to DIR_SEPARATOR
-    for(p = str; *p; p++)
-    {
-        if((*p == '/' || *p == '\\') && *p != DIR_SEPARATOR)
-            *p = DIR_SEPARATOR;
-    }
+	// Convert all slashes/backslashes to DIR_SEPARATOR
+	for(p = str; *p; p++)
+	{
+		if((*p == '/' || *p == '\\') && *p != DIR_SEPARATOR)
+			*p = DIR_SEPARATOR;
+	}
 
-    // Remove trailing slashes
-    while(p > str && *--p == DIR_SEPARATOR)
-        *p = 0;
+	// Remove trailing slashes
+	while(p > str && *--p == DIR_SEPARATOR)
+		*p = 0;
 
-    // Collapse multiple slashes
-    for(p = str; (*str++ = *p); )
-        if(*p++ == DIR_SEPARATOR)
-            while(*p == DIR_SEPARATOR)
-                p++;
+	// Collapse multiple slashes
+	for(p = str; (*str++ = *p); )
+		if(*p++ == DIR_SEPARATOR)
+			while(*p == DIR_SEPARATOR)
+				p++;
 }
 
 //
@@ -417,22 +417,22 @@ void M_NormalizeSlashes(char *str)
 //
 char *M_SafeFilePath(const char *basepath, const char *newcomponent)
 {
-    int   newstrlen = 0;
-    char *newstr = NULL;
+	int   newstrlen = 0;
+	char *newstr = NULL;
 
-    if (!strcmp(basepath, ""))
-    {
-        basepath = ".";
-    }
+	if (!strcmp(basepath, ""))
+	{
+		basepath = ".";
+	}
 
-    // Always throw in a slash. M_NormalizeSlashes will remove it in the case
-    // that either basepath or newcomponent includes a redundant slash at the
-    // end or beginning respectively.
-    newstrlen = M_StringAlloc(&newstr, 3, 1, basepath, "/", newcomponent);
-    M_snprintf(newstr, newstrlen, "%s/%s", basepath, newcomponent);
-    M_NormalizeSlashes(newstr);
+	// Always throw in a slash. M_NormalizeSlashes will remove it in the case
+	// that either basepath or newcomponent includes a redundant slash at the
+	// end or beginning respectively.
+	newstrlen = M_StringAlloc(&newstr, 3, 1, basepath, "/", newcomponent);
+	M_snprintf(newstr, newstrlen, "%s/%s", basepath, newcomponent);
+	M_NormalizeSlashes(newstr);
 
-    return newstr;
+	return newstr;
 }
 
 //
@@ -445,19 +445,19 @@ char *M_SafeFilePath(const char *basepath, const char *newcomponent)
 //
 void M_CreateSaveDirs(const char *savedir)
 {
-    int i;
+	int i;
 
-    for(i = 0; i < 7; i++)
-    {
-        char *compositedir;
+	for(i = 0; i < 7; i++)
+	{
+		char *compositedir;
 
-        // compose the full path by concatenating with savedir
-        compositedir = M_SafeFilePath(savedir, M_MakeStrifeSaveDir(i, ""));
+		// compose the full path by concatenating with savedir
+		compositedir = M_SafeFilePath(savedir, M_MakeStrifeSaveDir(i, ""));
 
-        M_MakeDirectory(compositedir);
+		M_MakeDirectory(compositedir);
 
-        Z_Free(compositedir);
-    }
+		Z_Free(compositedir);
+	}
 }
 
 //
@@ -467,12 +467,12 @@ void M_CreateSaveDirs(const char *savedir)
 //
 char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
 {
-    static char tmpbuffer[32];
+	static char tmpbuffer[32];
 
-    M_snprintf(tmpbuffer, sizeof(tmpbuffer),
-               "strfsav%d.ssg%s", slotnum, extra);
+	M_snprintf(tmpbuffer, sizeof(tmpbuffer),
+			   "strfsav%d.ssg%s", slotnum, extra);
 
-    return tmpbuffer;
+	return tmpbuffer;
 }
 
 // 
@@ -483,44 +483,44 @@ char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
 //
 char M_GetFilePath(const char *fn, char *dest, size_t len)
 {
-    boolean found_slash = false;
-    char *p;
-    char sepchar = '\0';
+	boolean found_slash = false;
+	char *p;
+	char sepchar = '\0';
 
-    memset(dest, 0, len);
+	memset(dest, 0, len);
 
-    p = dest + len - 1;
+	p = dest + len - 1;
 
-    M_StringCopy(dest, fn, len);
+	M_StringCopy(dest, fn, len);
 
-    while(p >= dest)
-    {
-        if(*p == '/' || *p == '\\')
-        {
-            sepchar = *p;
-            found_slash = true; // mark that the path ended with a slash
-            *p = '\0';
-            break;
-        }
-        *p = '\0';
-        p--;
-    }
+	while(p >= dest)
+	{
+		if(*p == '/' || *p == '\\')
+		{
+			sepchar = *p;
+			found_slash = true; // mark that the path ended with a slash
+			*p = '\0';
+			break;
+		}
+		*p = '\0';
+		p--;
+	}
 
-    // haleyjd: in the case that no slash was ever found, yet the
-    // path string is empty, we are dealing with a file local to the
-    // working directory. The proper path to return for such a string is
-    // not "", but ".", since the format strings add a slash now. When
-    // the string is empty but a slash WAS found, we really do want to
-    // return the empty string, since the path is relative to the root.
-    if(!found_slash && *dest == '\0')
-        *dest = '.';
+	// haleyjd: in the case that no slash was ever found, yet the
+	// path string is empty, we are dealing with a file local to the
+	// working directory. The proper path to return for such a string is
+	// not "", but ".", since the format strings add a slash now. When
+	// the string is empty but a slash WAS found, we really do want to
+	// return the empty string, since the path is relative to the root.
+	if(!found_slash && *dest == '\0')
+		*dest = '.';
 
-    // if a separator is not found, default to forward, because Windows 
-    // supports that too.
-    if(sepchar == '\0') 
-        sepchar = '/';
+	// if a separator is not found, default to forward, because Windows 
+	// supports that too.
+	if(sepchar == '\0') 
+		sepchar = '/';
 
-    return sepchar;
+	return sepchar;
 }
 
 // EOF

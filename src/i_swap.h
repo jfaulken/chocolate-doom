@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Endianess handling, swapping 16bit and 32bit.
+//      Endianess handling, swapping 16bit and 32bit.
 //
 
 

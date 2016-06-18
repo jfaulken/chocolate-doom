@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	System specific interface stuff.
+//      System specific interface stuff.
 //
 
 
@@ -28,7 +28,7 @@
 // Read events from all input devices
 
 void D_ProcessEvents (void); 
-	
+		
 
 //
 // BASE LEVEL

@@ -25,29 +25,29 @@
 #include "sha1.h"
 
 #define DEH_BEGIN_MAPPING(mapping_name, structname)           \
-    static structname deh_mapping_base;                       \
-    static deh_mapping_t mapping_name =                       \
-    {                                                         \
-        &deh_mapping_base,                                    \
-        {
+	static structname deh_mapping_base;                       \
+	static deh_mapping_t mapping_name =                       \
+	{                                                         \
+		&deh_mapping_base,                                    \
+		{
 
 #define DEH_MAPPING(deh_name, fieldname)                      \
-             {deh_name, &deh_mapping_base.fieldname,          \
-                 sizeof(deh_mapping_base.fieldname),          \
-                 false},
+			 {deh_name, &deh_mapping_base.fieldname,          \
+				 sizeof(deh_mapping_base.fieldname),          \
+				 false},
 
 #define DEH_MAPPING_STRING(deh_name, fieldname)               \
-             {deh_name, &deh_mapping_base.fieldname,          \
-                 sizeof(deh_mapping_base.fieldname),          \
-                 true},
+			 {deh_name, &deh_mapping_base.fieldname,          \
+				 sizeof(deh_mapping_base.fieldname),          \
+				 true},
 
 #define DEH_UNSUPPORTED_MAPPING(deh_name)                     \
-             {deh_name, NULL, -1, false},
+			 {deh_name, NULL, -1, false},
 
 #define DEH_END_MAPPING                                       \
-             {NULL, NULL, -1}                                 \
-        }                                                     \
-    };
+			 {NULL, NULL, -1}                                 \
+		}                                                     \
+	};
 
 
 
@@ -58,36 +58,36 @@ typedef struct deh_mapping_entry_s deh_mapping_entry_t;
 
 struct deh_mapping_entry_s 
 {
-    // field name
+	// field name
    
-    char *name;
+	char *name;
 
-    // location relative to the base in the deh_mapping_t struct
-    // If this is NULL, it is an unsupported mapping
+	// location relative to the base in the deh_mapping_t struct
+	// If this is NULL, it is an unsupported mapping
 
-    void *location;
+	void *location;
 
-    // field size
+	// field size
 
-    int size;
+	int size;
 
-    // if true, this is a string value.
+	// if true, this is a string value.
 
-    boolean is_string;
+	boolean is_string;
 };
 
 struct deh_mapping_s
 {
-    void *base;
-    deh_mapping_entry_t entries[MAX_MAPPING_ENTRIES];
+	void *base;
+	deh_mapping_entry_t entries[MAX_MAPPING_ENTRIES];
 };
 
 boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
-                       void *structptr, char *name, int value);
+					   void *structptr, char *name, int value);
 boolean DEH_SetStringMapping(deh_context_t *context, deh_mapping_t *mapping,
-                             void *structptr, char *name, char *value);
+							 void *structptr, char *name, char *value);
 void DEH_StructSHA1Sum(sha1_context_t *context, deh_mapping_t *mapping,
-                       void *structptr);
+					   void *structptr);
 
 #endif /* #ifndef DEH_MAPPING_H */
 

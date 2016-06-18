@@ -55,78 +55,78 @@ DEH_END_MAPPING
 
 static void *DEH_ThingStart(deh_context_t *context, char *line)
 {
-    int thing_number = 0;
-    mobjinfo_t *mobj;
-    
-    if (sscanf(line, "Thing %i", &thing_number) != 1)
-    {
-        DEH_Warning(context, "Parse error on section start");
-        return NULL;
-    }
+	int thing_number = 0;
+	mobjinfo_t *mobj;
+	
+	if (sscanf(line, "Thing %i", &thing_number) != 1)
+	{
+		DEH_Warning(context, "Parse error on section start");
+		return NULL;
+	}
 
-    // dehacked files are indexed from 1
-    --thing_number;
+	// dehacked files are indexed from 1
+	--thing_number;
 
-    if (thing_number < 0 || thing_number >= NUMMOBJTYPES)
-    {
-        DEH_Warning(context, "Invalid thing number: %i", thing_number);
-        return NULL;
-    }
-    
-    mobj = &mobjinfo[thing_number];
-    
-    return mobj;
+	if (thing_number < 0 || thing_number >= NUMMOBJTYPES)
+	{
+		DEH_Warning(context, "Invalid thing number: %i", thing_number);
+		return NULL;
+	}
+	
+	mobj = &mobjinfo[thing_number];
+	
+	return mobj;
 }
 
 static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
 {
-    mobjinfo_t *mobj;
-    char *variable_name, *value;
-    int ivalue;
-    
-    if (tag == NULL)
-       return;
+	mobjinfo_t *mobj;
+	char *variable_name, *value;
+	int ivalue;
+	
+	if (tag == NULL)
+	   return;
 
-    mobj = (mobjinfo_t *) tag;
+	mobj = (mobjinfo_t *) tag;
 
-    // Parse the assignment
+	// Parse the assignment
 
-    if (!DEH_ParseAssignment(line, &variable_name, &value))
-    {
-        // Failed to parse
+	if (!DEH_ParseAssignment(line, &variable_name, &value))
+	{
+		// Failed to parse
 
-        DEH_Warning(context, "Failed to parse assignment");
-        return;
-    }
-    
+		DEH_Warning(context, "Failed to parse assignment");
+		return;
+	}
+	
 //    printf("Set %s to %s for mobj\n", variable_name, value);
 
-    // all values are integers
+	// all values are integers
 
-    ivalue = atoi(value);
-    
-    // Set the field value
+	ivalue = atoi(value);
+	
+	// Set the field value
 
-    DEH_SetMapping(context, &thing_mapping, mobj, variable_name, ivalue);
+	DEH_SetMapping(context, &thing_mapping, mobj, variable_name, ivalue);
 }
 
 static void DEH_ThingSHA1Sum(sha1_context_t *context)
 {
-    int i;
+	int i;
 
-    for (i=0; i<NUMMOBJTYPES; ++i)
-    {
-        DEH_StructSHA1Sum(context, &thing_mapping, &mobjinfo[i]);
-    }
+	for (i=0; i<NUMMOBJTYPES; ++i)
+	{
+		DEH_StructSHA1Sum(context, &thing_mapping, &mobjinfo[i]);
+	}
 }
 
 deh_section_t deh_section_thing =
 {
-    "Thing",
-    NULL,
-    DEH_ThingStart,
-    DEH_ThingParseLine,
-    NULL,
-    DEH_ThingSHA1Sum,
+	"Thing",
+	NULL,
+	DEH_ThingStart,
+	DEH_ThingParseLine,
+	NULL,
+	DEH_ThingSHA1Sum,
 };
 

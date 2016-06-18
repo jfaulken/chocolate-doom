@@ -21,37 +21,37 @@
 #include "i_video.h"
 #include "v_patch.h"
 
-#define	ANGLETOSKYSHIFT		22      // sky map is 256*128*4 maps
+#define ANGLETOSKYSHIFT         22      // sky map is 256*128*4 maps
 
-#define	BASEYCENTER			100
+#define BASEYCENTER                     100
 
-#define MAXWIDTH			1120
-#define	MAXHEIGHT			832
+#define MAXWIDTH                        1120
+#define MAXHEIGHT                       832
 
-#define	PI					3.141592657
+#define PI                                      3.141592657
 
-#define	CENTERY				(SCREENHEIGHT/2)
+#define CENTERY                         (SCREENHEIGHT/2)
 
-#define	MINZ			(FRACUNIT*4)
+#define MINZ                    (FRACUNIT*4)
 
-#define	FIELDOFVIEW		2048    // fineangles in the SCREENWIDTH wide window
+#define FIELDOFVIEW             2048    // fineangles in the SCREENWIDTH wide window
 
 //
 // lighting constants
 //
-#define	LIGHTLEVELS			16
-#define	LIGHTSEGSHIFT		4
-#define	MAXLIGHTSCALE		48
-#define	LIGHTSCALESHIFT		12
-#define	MAXLIGHTZ			128
-#define	LIGHTZSHIFT			20
-#define	NUMCOLORMAPS		32      // number of diminishing
-#define	INVERSECOLORMAP		32
+#define LIGHTLEVELS                     16
+#define LIGHTSEGSHIFT           4
+#define MAXLIGHTSCALE           48
+#define LIGHTSCALESHIFT         12
+#define MAXLIGHTZ                       128
+#define LIGHTZSHIFT                     20
+#define NUMCOLORMAPS            32      // number of diminishing
+#define INVERSECOLORMAP         32
 
 /*
 ==============================================================================
 
-					INTERNAL MAP TYPES
+										INTERNAL MAP TYPES
 
 ==============================================================================
 */
@@ -60,37 +60,37 @@
 
 typedef struct
 {
-    fixed_t x, y;
+	fixed_t x, y;
 } vertex_t;
 
 struct line_s;
 
 typedef struct
 {
-    fixed_t floorheight, ceilingheight;
-    short floorpic, ceilingpic;
-    short lightlevel;
-    short special, tag;
+	fixed_t floorheight, ceilingheight;
+	short floorpic, ceilingpic;
+	short lightlevel;
+	short special, tag;
 
-    int soundtraversed;         // 0 = untraversed, 1,2 = sndlines -1
-    mobj_t *soundtarget;        // thing that made a sound (or null)
+	int soundtraversed;         // 0 = untraversed, 1,2 = sndlines -1
+	mobj_t *soundtarget;        // thing that made a sound (or null)
 
-    int blockbox[4];            // mapblock bounding box for height changes
-    degenmobj_t soundorg;       // for any sounds played by the sector
+	int blockbox[4];            // mapblock bounding box for height changes
+	degenmobj_t soundorg;       // for any sounds played by the sector
 
-    int validcount;             // if == validcount, already checked
-    mobj_t *thinglist;          // list of mobjs in sector
-    void *specialdata;          // thinker_t for reversable actions
-    int linecount;
-    struct line_s **lines;      // [linecount] size
+	int validcount;             // if == validcount, already checked
+	mobj_t *thinglist;          // list of mobjs in sector
+	void *specialdata;          // thinker_t for reversable actions
+	int linecount;
+	struct line_s **lines;      // [linecount] size
 } sector_t;
 
 typedef struct
 {
-    fixed_t textureoffset;      // add this to the calculated texture col
-    fixed_t rowoffset;          // add this to the calculated texture top
-    short toptexture, bottomtexture, midtexture;
-    sector_t *sector;
+	fixed_t textureoffset;      // add this to the calculated texture col
+	fixed_t rowoffset;          // add this to the calculated texture top
+	short toptexture, bottomtexture, midtexture;
+	sector_t *sector;
 } side_t;
 
 typedef enum
@@ -98,110 +98,110 @@ typedef enum
 
 typedef struct line_s
 {
-    vertex_t *v1, *v2;
-    fixed_t dx, dy;             // v2 - v1 for side checking
-    short flags;
-    short special, tag;
-    short sidenum[2];           // sidenum[1] will be -1 if one sided
-    fixed_t bbox[4];
-    slopetype_t slopetype;      // to aid move clipping
-    sector_t *frontsector, *backsector;
-    int validcount;             // if == validcount, already checked
-    void *specialdata;          // thinker_t for reversable actions
+	vertex_t *v1, *v2;
+	fixed_t dx, dy;             // v2 - v1 for side checking
+	short flags;
+	short special, tag;
+	short sidenum[2];           // sidenum[1] will be -1 if one sided
+	fixed_t bbox[4];
+	slopetype_t slopetype;      // to aid move clipping
+	sector_t *frontsector, *backsector;
+	int validcount;             // if == validcount, already checked
+	void *specialdata;          // thinker_t for reversable actions
 } line_t;
 
 
 typedef struct subsector_s
 {
-    sector_t *sector;
-    short numlines;
-    short firstline;
+	sector_t *sector;
+	short numlines;
+	short firstline;
 } subsector_t;
 
 typedef struct
 {
-    vertex_t *v1, *v2;
-    fixed_t offset;
-    angle_t angle;
-    side_t *sidedef;
-    line_t *linedef;
-    sector_t *frontsector;
-    sector_t *backsector;       // NULL for one sided lines
+	vertex_t *v1, *v2;
+	fixed_t offset;
+	angle_t angle;
+	side_t *sidedef;
+	line_t *linedef;
+	sector_t *frontsector;
+	sector_t *backsector;       // NULL for one sided lines
 } seg_t;
 
 typedef struct
 {
-    fixed_t x, y, dx, dy;       // partition line
-    fixed_t bbox[2][4];         // bounding box for each child
-    unsigned short children[2]; // if NF_SUBSECTOR its a subsector
+	fixed_t x, y, dx, dy;       // partition line
+	fixed_t bbox[2][4];         // bounding box for each child
+	unsigned short children[2]; // if NF_SUBSECTOR its a subsector
 } node_t;
 
 
 /*
 ==============================================================================
 
-						OTHER TYPES
+												OTHER TYPES
 
 ==============================================================================
 */
 
 typedef byte lighttable_t;      // this could be wider for >8 bit display
 
-#define	MAXVISPLANES	128
-#define	MAXOPENINGS		SCREENWIDTH*64
+#define MAXVISPLANES    128
+#define MAXOPENINGS             SCREENWIDTH*64
 
 typedef struct
 {
-    fixed_t height;
-    int picnum;
-    int lightlevel;
-    int special;
-    int minx, maxx;
-    byte pad1;                  // leave pads for [minx-1]/[maxx+1]
-    byte top[SCREENWIDTH];
-    byte pad2;
-    byte pad3;
-    byte bottom[SCREENWIDTH];
-    byte pad4;
+	fixed_t height;
+	int picnum;
+	int lightlevel;
+	int special;
+	int minx, maxx;
+	byte pad1;                  // leave pads for [minx-1]/[maxx+1]
+	byte top[SCREENWIDTH];
+	byte pad2;
+	byte pad3;
+	byte bottom[SCREENWIDTH];
+	byte pad4;
 } visplane_t;
 
 typedef struct drawseg_s
 {
-    seg_t *curline;
-    int x1, x2;
-    fixed_t scale1, scale2, scalestep;
-    int silhouette;             // 0=none, 1=bottom, 2=top, 3=both
-    fixed_t bsilheight;         // don't clip sprites above this
-    fixed_t tsilheight;         // don't clip sprites below this
+	seg_t *curline;
+	int x1, x2;
+	fixed_t scale1, scale2, scalestep;
+	int silhouette;             // 0=none, 1=bottom, 2=top, 3=both
+	fixed_t bsilheight;         // don't clip sprites above this
+	fixed_t tsilheight;         // don't clip sprites below this
 // pointers to lists for sprite clipping
-    short *sprtopclip;          // adjusted so [x1] is first value
-    short *sprbottomclip;       // adjusted so [x1] is first value
-    short *maskedtexturecol;    // adjusted so [x1] is first value
+	short *sprtopclip;          // adjusted so [x1] is first value
+	short *sprbottomclip;       // adjusted so [x1] is first value
+	short *maskedtexturecol;    // adjusted so [x1] is first value
 } drawseg_t;
 
-#define	SIL_NONE	0
-#define	SIL_BOTTOM	1
-#define SIL_TOP		2
-#define	SIL_BOTH	3
+#define SIL_NONE        0
+#define SIL_BOTTOM      1
+#define SIL_TOP         2
+#define SIL_BOTH        3
 
-#define	MAXDRAWSEGS		256
+#define MAXDRAWSEGS             256
 
 // A vissprite_t is a thing that will be drawn during a refresh
 typedef struct vissprite_s
 {
-    struct vissprite_s *prev, *next;
-    int x1, x2;
-    fixed_t gx, gy;             // for line side calculation
-    fixed_t gz, gzt;            // global bottom / top for silhouette clipping
-    fixed_t startfrac;          // horizontal position of x1
-    fixed_t scale;
-    fixed_t xiscale;            // negative if flipped
-    fixed_t texturemid;
-    int patch;
-    lighttable_t *colormap;
-    int mobjflags;              // for color translation and shadow draw
-    boolean psprite;            // true if psprite
-    fixed_t footclip;           // foot clipping
+	struct vissprite_s *prev, *next;
+	int x1, x2;
+	fixed_t gx, gy;             // for line side calculation
+	fixed_t gz, gzt;            // global bottom / top for silhouette clipping
+	fixed_t startfrac;          // horizontal position of x1
+	fixed_t scale;
+	fixed_t xiscale;            // negative if flipped
+	fixed_t texturemid;
+	int patch;
+	lighttable_t *colormap;
+	int mobjflags;              // for color translation and shadow draw
+	boolean psprite;            // true if psprite
+	fixed_t footclip;           // foot clipping
 } vissprite_t;
 
 
@@ -217,15 +217,15 @@ extern visplane_t *floorplane, *ceilingplane;
 
 typedef struct
 {
-    boolean rotate;             // if false use 0 for any position
-    short lump[8];              // lump to use for view angles 0-7
-    byte flip[8];               // flip (1 = flip) to use for view angles 0-7
+	boolean rotate;             // if false use 0 for any position
+	short lump[8];              // lump to use for view angles 0-7
+	byte flip[8];               // flip (1 = flip) to use for view angles 0-7
 } spriteframe_t;
 
 typedef struct
 {
-    int numframes;
-    spriteframe_t *spriteframes;
+	int numframes;
+	spriteframe_t *spriteframes;
 } spritedef_t;
 
 extern spritedef_t *sprites;
@@ -367,7 +367,7 @@ void R_MakeSpans(int x, int t1, int b1, int t2, int b2);
 void R_DrawPlanes(void);
 
 visplane_t *R_FindPlane(fixed_t height, int picnum, int lightlevel,
-                        int special);
+						int special);
 visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop);
 
 
@@ -400,7 +400,7 @@ void R_PrecacheLevel(void);
 //
 // R_things.c
 //
-#define	MAXVISSPRITES	128
+#define MAXVISSPRITES   128
 
 extern vissprite_t vissprites[MAXVISSPRITES], *vissprite_p;
 extern vissprite_t vsprsortedhead;

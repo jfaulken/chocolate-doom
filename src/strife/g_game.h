@@ -74,7 +74,7 @@ boolean G_RiftCheat(int riftSpotNum); // [STRIFE]
 void G_BuildTiccmd (ticcmd_t *cmd, int maketic);
 
 void G_Ticker (void);
-boolean G_Responder (event_t*	ev);
+boolean G_Responder (event_t*   ev);
 
 void G_ScreenShot (void);
 

@@ -59,70 +59,70 @@
 
 #include "d_loop.h"
 
-#define	SAVEGAMENAME "hticsav"
+#define SAVEGAMENAME "hticsav"
 
 /*
 ===============================================================================
 
-						GLOBAL TYPES
+												GLOBAL TYPES
 
 ===============================================================================
 */
 
-#define NUMARTIFCTS	28
-#define MAXPLAYERS	4
+#define NUMARTIFCTS     28
+#define MAXPLAYERS      4
 
-#define	BT_ATTACK		1
-#define	BT_USE			2
-#define	BT_CHANGE		4       // if true, the next 3 bits hold weapon num
-#define	BT_WEAPONMASK	(8+16+32)
-#define	BT_WEAPONSHIFT	3
+#define BT_ATTACK               1
+#define BT_USE                  2
+#define BT_CHANGE               4       // if true, the next 3 bits hold weapon num
+#define BT_WEAPONMASK   (8+16+32)
+#define BT_WEAPONSHIFT  3
 
-#define BT_SPECIAL		128     // game events, not really buttons
-#define	BTS_SAVEMASK	(4+8+16)
-#define	BTS_SAVESHIFT	2
-#define	BT_SPECIALMASK	3
-#define	BTS_PAUSE		1       // pause the game
-#define	BTS_SAVEGAME	2       // save the game at each console
+#define BT_SPECIAL              128     // game events, not really buttons
+#define BTS_SAVEMASK    (4+8+16)
+#define BTS_SAVESHIFT   2
+#define BT_SPECIALMASK  3
+#define BTS_PAUSE               1       // pause the game
+#define BTS_SAVEGAME    2       // save the game at each console
 // savegame slot numbers occupy the second byte of buttons
 
 typedef enum
 {
-    GS_LEVEL,
-    GS_INTERMISSION,
-    GS_FINALE,
-    GS_DEMOSCREEN
+	GS_LEVEL,
+	GS_INTERMISSION,
+	GS_FINALE,
+	GS_DEMOSCREEN
 } gamestate_t;
 
 typedef enum
 {
-    ga_nothing,
-    ga_loadlevel,
-    ga_newgame,
-    ga_loadgame,
-    ga_savegame,
-    ga_playdemo,
-    ga_completed,
-    ga_victory,
-    ga_worlddone,
-    ga_screenshot
+	ga_nothing,
+	ga_loadlevel,
+	ga_newgame,
+	ga_loadgame,
+	ga_savegame,
+	ga_playdemo,
+	ga_completed,
+	ga_victory,
+	ga_worlddone,
+	ga_screenshot
 } gameaction_t;
 
 typedef enum
 {
-    wipe_0,
-    wipe_1,
-    wipe_2,
-    wipe_3,
-    wipe_4,
-    NUMWIPES,
-    wipe_random
+	wipe_0,
+	wipe_1,
+	wipe_2,
+	wipe_3,
+	wipe_4,
+	NUMWIPES,
+	wipe_random
 } wipe_t;
 
 /*
 ===============================================================================
 
-							MAPOBJ DATA
+														MAPOBJ DATA
 
 ===============================================================================
 */
@@ -132,192 +132,192 @@ typedef void (*think_t) ();
 
 typedef struct thinker_s
 {
-    struct thinker_s *prev, *next;
-    think_t function;
+	struct thinker_s *prev, *next;
+	think_t function;
 } thinker_t;
 
 typedef union
 {
-    int i;
-    struct mobj_s *m;
+	int i;
+	struct mobj_s *m;
 } specialval_t;
 
 struct player_s;
 
 typedef struct mobj_s
 {
-    thinker_t thinker;          // thinker links
+	thinker_t thinker;          // thinker links
 
 // info for drawing
-    fixed_t x, y, z;
-    struct mobj_s *snext, *sprev;       // links in sector (if needed)
-    angle_t angle;
-    spritenum_t sprite;         // used to find patch_t and flip value
-    int frame;                  // might be ord with FF_FULLBRIGHT
+	fixed_t x, y, z;
+	struct mobj_s *snext, *sprev;       // links in sector (if needed)
+	angle_t angle;
+	spritenum_t sprite;         // used to find patch_t and flip value
+	int frame;                  // might be ord with FF_FULLBRIGHT
 
 // interaction info
-    struct mobj_s *bnext, *bprev;       // links in blocks (if needed)
-    struct subsector_s *subsector;
-    fixed_t floorz, ceilingz;   // closest together of contacted secs
-    fixed_t radius, height;     // for movement checking
-    fixed_t momx, momy, momz;   // momentums
+	struct mobj_s *bnext, *bprev;       // links in blocks (if needed)
+	struct subsector_s *subsector;
+	fixed_t floorz, ceilingz;   // closest together of contacted secs
+	fixed_t radius, height;     // for movement checking
+	fixed_t momx, momy, momz;   // momentums
 
-    int validcount;             // if == validcount, already checked
+	int validcount;             // if == validcount, already checked
 
-    mobjtype_t type;
-    mobjinfo_t *info;           // &mobjinfo[mobj->type]
-    int tics;                   // state tic counter
-    state_t *state;
-    int damage;                 // For missiles
-    int flags;
-    int flags2;                 // Heretic flags
-    specialval_t special1;      // Special info
-    specialval_t special2;      // Special info
-    int health;
-    int movedir;                // 0-7
-    int movecount;              // when 0, select a new dir
-    struct mobj_s *target;      // thing being chased/attacked (or NULL)
-    // also the originator for missiles
-    int reactiontime;           // if non 0, don't attack yet
-    // used by player to freeze a bit after
-    // teleporting
-    int threshold;              // if >0, the target will be chased
-    // no matter what (even if shot)
-    struct player_s *player;    // only valid if type == MT_PLAYER
-    int lastlook;               // player number last looked for
+	mobjtype_t type;
+	mobjinfo_t *info;           // &mobjinfo[mobj->type]
+	int tics;                   // state tic counter
+	state_t *state;
+	int damage;                 // For missiles
+	int flags;
+	int flags2;                 // Heretic flags
+	specialval_t special1;      // Special info
+	specialval_t special2;      // Special info
+	int health;
+	int movedir;                // 0-7
+	int movecount;              // when 0, select a new dir
+	struct mobj_s *target;      // thing being chased/attacked (or NULL)
+	// also the originator for missiles
+	int reactiontime;           // if non 0, don't attack yet
+	// used by player to freeze a bit after
+	// teleporting
+	int threshold;              // if >0, the target will be chased
+	// no matter what (even if shot)
+	struct player_s *player;    // only valid if type == MT_PLAYER
+	int lastlook;               // player number last looked for
 
-    mapthing_t spawnpoint;      // for nightmare respawn
+	mapthing_t spawnpoint;      // for nightmare respawn
 } mobj_t;
 
 // each sector has a degenmobj_t in it's center for sound origin purposes
 typedef struct
 {
-    thinker_t thinker;          // not used for anything
-    fixed_t x, y, z;
+	thinker_t thinker;          // not used for anything
+	fixed_t x, y, z;
 } degenmobj_t;
 
 //
 // frame flags
 //
-#define	FF_FULLBRIGHT	0x8000  // flag in thing->frame
-#define FF_FRAMEMASK	0x7fff
+#define FF_FULLBRIGHT   0x8000  // flag in thing->frame
+#define FF_FRAMEMASK    0x7fff
 
 // --- mobj.flags ---
 
-#define	MF_SPECIAL	1         // call P_SpecialThing when touched
-#define	MF_SOLID	2
-#define	MF_SHOOTABLE	4
-#define	MF_NOSECTOR	8         // don't use the sector links
-                                  // (invisible but touchable)
-#define	MF_NOBLOCKMAP	16        // don't use the blocklinks
-                                  // (inert but displayable)
-#define	MF_AMBUSH	32
-#define	MF_JUSTHIT	64        // try to attack right back
-#define	MF_JUSTATTACKED	128       // take at least one step before attacking
-#define	MF_SPAWNCEILING	256       // hang from ceiling instead of floor
-#define	MF_NOGRAVITY	512       // don't apply gravity every tic
+#define MF_SPECIAL      1         // call P_SpecialThing when touched
+#define MF_SOLID        2
+#define MF_SHOOTABLE    4
+#define MF_NOSECTOR     8         // don't use the sector links
+								  // (invisible but touchable)
+#define MF_NOBLOCKMAP   16        // don't use the blocklinks
+								  // (inert but displayable)
+#define MF_AMBUSH       32
+#define MF_JUSTHIT      64        // try to attack right back
+#define MF_JUSTATTACKED 128       // take at least one step before attacking
+#define MF_SPAWNCEILING 256       // hang from ceiling instead of floor
+#define MF_NOGRAVITY    512       // don't apply gravity every tic
 
 // movement flags
-#define	MF_DROPOFF	0x400     // allow jumps from high places
-#define	MF_PICKUP	0x800     // for players to pick up items
-#define	MF_NOCLIP	0x1000    // player cheat
-#define	MF_SLIDE	0x2000    // keep info about sliding along walls
-#define	MF_FLOAT	0x4000    // allow moves to any height, no gravity
-#define	MF_TELEPORT	0x8000    // don't cross lines or look at heights
-#define MF_MISSILE	0x10000   // don't hit same species, explode on block
+#define MF_DROPOFF      0x400     // allow jumps from high places
+#define MF_PICKUP       0x800     // for players to pick up items
+#define MF_NOCLIP       0x1000    // player cheat
+#define MF_SLIDE        0x2000    // keep info about sliding along walls
+#define MF_FLOAT        0x4000    // allow moves to any height, no gravity
+#define MF_TELEPORT     0x8000    // don't cross lines or look at heights
+#define MF_MISSILE      0x10000   // don't hit same species, explode on block
 
-#define	MF_DROPPED	0x20000   // dropped by a demon, not level spawned
-#define	MF_SHADOW	0x40000   // use translucent draw (shadow demons / invis)
-#define	MF_NOBLOOD	0x80000   // don't bleed when shot (use puff)
-#define	MF_CORPSE	0x100000  // don't stop moving halfway off a step
-#define	MF_INFLOAT	0x200000  // floating to a height for a move, don't
-                                  // auto float to target's height
+#define MF_DROPPED      0x20000   // dropped by a demon, not level spawned
+#define MF_SHADOW       0x40000   // use translucent draw (shadow demons / invis)
+#define MF_NOBLOOD      0x80000   // don't bleed when shot (use puff)
+#define MF_CORPSE       0x100000  // don't stop moving halfway off a step
+#define MF_INFLOAT      0x200000  // floating to a height for a move, don't
+								  // auto float to target's height
 
-#define	MF_COUNTKILL	0x400000  // count towards intermission kill total
-#define	MF_COUNTITEM	0x800000  // count towards intermission item total
+#define MF_COUNTKILL    0x400000  // count towards intermission kill total
+#define MF_COUNTITEM    0x800000  // count towards intermission item total
 
-#define	MF_SKULLFLY	0x1000000 // skull in flight
-#define	MF_NOTDMATCH	0x2000000 // don't spawn in death match (key cards)
+#define MF_SKULLFLY     0x1000000 // skull in flight
+#define MF_NOTDMATCH    0x2000000 // don't spawn in death match (key cards)
 
-#define	MF_TRANSLATION	0xc000000 // if 0x4 0x8 or 0xc, use a translation
-#define	MF_TRANSSHIFT	26      // table for player colormaps
+#define MF_TRANSLATION  0xc000000 // if 0x4 0x8 or 0xc, use a translation
+#define MF_TRANSSHIFT   26      // table for player colormaps
 
 // --- mobj.flags2 ---
 
-#define MF2_LOGRAV		0x00000001  // alternate gravity setting
-#define MF2_WINDTHRUST		0x00000002  // gets pushed around by the wind
-                                            // specials
-#define MF2_FLOORBOUNCE		0x00000004  // bounces off the floor
-#define MF2_THRUGHOST		0x00000008  // missile will pass through ghosts
-#define MF2_FLY			0x00000010  // fly mode is active
-#define MF2_FOOTCLIP		0x00000020  // if feet are allowed to be clipped
-#define MF2_SPAWNFLOAT		0x00000040  // spawn random float z
-#define MF2_NOTELEPORT		0x00000080  // does not teleport
-#define MF2_RIP			0x00000100  // missile rips through solid
-                                            // targets
-#define MF2_PUSHABLE		0x00000200  // can be pushed by other moving
-                                            // mobjs
-#define MF2_SLIDE		0x00000400  // slides against walls
-#define MF2_ONMOBJ		0x00000800  // mobj is resting on top of another
-                                            // mobj
-#define MF2_PASSMOBJ		0x00001000  // Enable z block checking.  If on,
-                                            // this flag will allow the mobj to
-                                            // pass over/under other mobjs.
-#define MF2_CANNOTPUSH		0x00002000  // cannot push other pushable mobjs
-#define MF2_FEETARECLIPPED	0x00004000  // a mobj's feet are now being cut
-#define MF2_BOSS		0x00008000  // mobj is a major boss
-#define MF2_FIREDAMAGE		0x00010000  // does fire damage
-#define MF2_NODMGTHRUST		0x00020000  // does not thrust target when
-                                            // damaging
-#define MF2_TELESTOMP		0x00040000  // mobj can stomp another
-#define MF2_FLOATBOB		0x00080000  // use float bobbing z movement
-#define MF2_DONTDRAW		0X00100000  // don't generate a vissprite
+#define MF2_LOGRAV              0x00000001  // alternate gravity setting
+#define MF2_WINDTHRUST          0x00000002  // gets pushed around by the wind
+											// specials
+#define MF2_FLOORBOUNCE         0x00000004  // bounces off the floor
+#define MF2_THRUGHOST           0x00000008  // missile will pass through ghosts
+#define MF2_FLY                 0x00000010  // fly mode is active
+#define MF2_FOOTCLIP            0x00000020  // if feet are allowed to be clipped
+#define MF2_SPAWNFLOAT          0x00000040  // spawn random float z
+#define MF2_NOTELEPORT          0x00000080  // does not teleport
+#define MF2_RIP                 0x00000100  // missile rips through solid
+											// targets
+#define MF2_PUSHABLE            0x00000200  // can be pushed by other moving
+											// mobjs
+#define MF2_SLIDE               0x00000400  // slides against walls
+#define MF2_ONMOBJ              0x00000800  // mobj is resting on top of another
+											// mobj
+#define MF2_PASSMOBJ            0x00001000  // Enable z block checking.  If on,
+											// this flag will allow the mobj to
+											// pass over/under other mobjs.
+#define MF2_CANNOTPUSH          0x00002000  // cannot push other pushable mobjs
+#define MF2_FEETARECLIPPED      0x00004000  // a mobj's feet are now being cut
+#define MF2_BOSS                0x00008000  // mobj is a major boss
+#define MF2_FIREDAMAGE          0x00010000  // does fire damage
+#define MF2_NODMGTHRUST         0x00020000  // does not thrust target when
+											// damaging
+#define MF2_TELESTOMP           0x00040000  // mobj can stomp another
+#define MF2_FLOATBOB            0x00080000  // use float bobbing z movement
+#define MF2_DONTDRAW            0X00100000  // don't generate a vissprite
 
 //=============================================================================
 typedef enum
 {
-    PST_LIVE,                   // playing
-    PST_DEAD,                   // dead on the ground
-    PST_REBORN                  // ready to restart
+	PST_LIVE,                   // playing
+	PST_DEAD,                   // dead on the ground
+	PST_REBORN                  // ready to restart
 } playerstate_t;
 
 // psprites are scaled shapes directly on the view screen
 // coordinates are given for a 320*200 view screen
 typedef enum
 {
-    ps_weapon,
-    ps_flash,
-    NUMPSPRITES
+	ps_weapon,
+	ps_flash,
+	NUMPSPRITES
 } psprnum_t;
 
 typedef struct
 {
-    state_t *state;             // a NULL state means not active
-    int tics;
-    fixed_t sx, sy;
+	state_t *state;             // a NULL state means not active
+	int tics;
+	fixed_t sx, sy;
 } pspdef_t;
 
 typedef enum
 {
-    key_yellow,
-    key_green,
-    key_blue,
-    NUMKEYS
+	key_yellow,
+	key_green,
+	key_blue,
+	NUMKEYS
 } keytype_t;
 
 typedef enum
 {
-    wp_staff,
-    wp_goldwand,
-    wp_crossbow,
-    wp_blaster,
-    wp_skullrod,
-    wp_phoenixrod,
-    wp_mace,
-    wp_gauntlets,
-    wp_beak,
-    NUMWEAPONS,
-    wp_nochange
+	wp_staff,
+	wp_goldwand,
+	wp_crossbow,
+	wp_blaster,
+	wp_skullrod,
+	wp_phoenixrod,
+	wp_mace,
+	wp_gauntlets,
+	wp_beak,
+	NUMWEAPONS,
+	wp_nochange
 } weapontype_t;
 
 #define AMMO_GWND_WIMPY 10
@@ -335,25 +335,25 @@ typedef enum
 
 typedef enum
 {
-    am_goldwand,
-    am_crossbow,
-    am_blaster,
-    am_skullrod,
-    am_phoenixrod,
-    am_mace,
-    NUMAMMO,
-    am_noammo                   // staff, gauntlets
+	am_goldwand,
+	am_crossbow,
+	am_blaster,
+	am_skullrod,
+	am_phoenixrod,
+	am_mace,
+	NUMAMMO,
+	am_noammo                   // staff, gauntlets
 } ammotype_t;
 
 typedef struct
 {
-    ammotype_t ammo;
-    int upstate;
-    int downstate;
-    int readystate;
-    int atkstate;
-    int holdatkstate;
-    int flashstate;
+	ammotype_t ammo;
+	int upstate;
+	int downstate;
+	int readystate;
+	int atkstate;
+	int holdatkstate;
+	int flashstate;
 } weaponinfo_t;
 
 extern weaponinfo_t wpnlev1info[NUMWEAPONS];
@@ -361,38 +361,38 @@ extern weaponinfo_t wpnlev2info[NUMWEAPONS];
 
 typedef enum
 {
-    arti_none,
-    arti_invulnerability,
-    arti_invisibility,
-    arti_health,
-    arti_superhealth,
-    arti_tomeofpower,
-    arti_torch,
-    arti_firebomb,
-    arti_egg,
-    arti_fly,
-    arti_teleport,
-    NUMARTIFACTS
+	arti_none,
+	arti_invulnerability,
+	arti_invisibility,
+	arti_health,
+	arti_superhealth,
+	arti_tomeofpower,
+	arti_torch,
+	arti_firebomb,
+	arti_egg,
+	arti_fly,
+	arti_teleport,
+	NUMARTIFACTS
 } artitype_t;
 
 typedef enum
 {
-    pw_None,
-    pw_invulnerability,
-    pw_invisibility,
-    pw_allmap,
-    pw_infrared,
-    pw_weaponlevel2,
-    pw_flight,
-    pw_shield,
-    pw_health2,
-    NUMPOWERS
+	pw_None,
+	pw_invulnerability,
+	pw_invisibility,
+	pw_allmap,
+	pw_infrared,
+	pw_weaponlevel2,
+	pw_flight,
+	pw_shield,
+	pw_health2,
+	NUMPOWERS
 } powertype_t;
 
-#define	INVULNTICS (30*35)
-#define	INVISTICS (60*35)
-#define	INFRATICS (120*35)
-#define	IRONTICS (60*35)
+#define INVULNTICS (30*35)
+#define INVISTICS (60*35)
+#define INFRATICS (120*35)
+#define IRONTICS (60*35)
 #define WPNLEV2TICS (40*35)
 #define FLIGHTTICS (60*35)
 
@@ -401,11 +401,11 @@ typedef enum
 #define MESSAGETICS (4*35)
 #define BLINKTHRESHOLD (4*32)
 
-#define NUMINVENTORYSLOTS	14
+#define NUMINVENTORYSLOTS       14
 typedef struct
 {
-    int type;
-    int count;
+	int type;
+	int count;
 } inventory_t;
 
 /*
@@ -418,68 +418,68 @@ typedef struct
 
 typedef struct player_s
 {
-    mobj_t *mo;
-    playerstate_t playerstate;
-    ticcmd_t cmd;
+	mobj_t *mo;
+	playerstate_t playerstate;
+	ticcmd_t cmd;
 
-    fixed_t viewz;              // focal origin above r.z
-    fixed_t viewheight;         // base height above floor for viewz
-    fixed_t deltaviewheight;    // squat speed
-    fixed_t bob;                // bounded/scaled total momentum
+	fixed_t viewz;              // focal origin above r.z
+	fixed_t viewheight;         // base height above floor for viewz
+	fixed_t deltaviewheight;    // squat speed
+	fixed_t bob;                // bounded/scaled total momentum
 
-    int flyheight;
-    int lookdir;
-    boolean centering;
-    int health;                 // only used between levels, mo->health
-    // is used during levels
-    int armorpoints, armortype; // armor type is 0-2
+	int flyheight;
+	int lookdir;
+	boolean centering;
+	int health;                 // only used between levels, mo->health
+	// is used during levels
+	int armorpoints, armortype; // armor type is 0-2
 
-    inventory_t inventory[NUMINVENTORYSLOTS];
-    artitype_t readyArtifact;
-    int artifactCount;
-    int inventorySlotNum;
-    int powers[NUMPOWERS];
-    boolean keys[NUMKEYS];
-    boolean backpack;
-    signed int frags[MAXPLAYERS];       // kills of other players
-    weapontype_t readyweapon;
-    weapontype_t pendingweapon; // wp_nochange if not changing
-    boolean weaponowned[NUMWEAPONS];
-    int ammo[NUMAMMO];
-    int maxammo[NUMAMMO];
-    int attackdown, usedown;    // true if button down last tic
-    int cheats;                 // bit flags
+	inventory_t inventory[NUMINVENTORYSLOTS];
+	artitype_t readyArtifact;
+	int artifactCount;
+	int inventorySlotNum;
+	int powers[NUMPOWERS];
+	boolean keys[NUMKEYS];
+	boolean backpack;
+	signed int frags[MAXPLAYERS];       // kills of other players
+	weapontype_t readyweapon;
+	weapontype_t pendingweapon; // wp_nochange if not changing
+	boolean weaponowned[NUMWEAPONS];
+	int ammo[NUMAMMO];
+	int maxammo[NUMAMMO];
+	int attackdown, usedown;    // true if button down last tic
+	int cheats;                 // bit flags
 
-    int refire;                 // refired shots are less accurate
+	int refire;                 // refired shots are less accurate
 
-    int killcount, itemcount, secretcount;      // for intermission
-    char *message;              // hint messages
-    int messageTics;            // counter for showing messages
-    int damagecount, bonuscount;        // for screen flashing
-    int flamecount;             // for flame thrower duration
-    mobj_t *attacker;           // who did damage (NULL for floors)
-    int extralight;             // so gun flashes light up areas
-    int fixedcolormap;          // can be set to REDCOLORMAP, etc
-    int colormap;               // 0-3 for which color to draw player
-    pspdef_t psprites[NUMPSPRITES];     // view sprites (gun, etc)
-    boolean didsecret;          // true if secret level has been done
-    int chickenTics;            // player is a chicken if > 0
-    int chickenPeck;            // chicken peck countdown
-    mobj_t *rain1;              // active rain maker 1
-    mobj_t *rain2;              // active rain maker 2
+	int killcount, itemcount, secretcount;      // for intermission
+	char *message;              // hint messages
+	int messageTics;            // counter for showing messages
+	int damagecount, bonuscount;        // for screen flashing
+	int flamecount;             // for flame thrower duration
+	mobj_t *attacker;           // who did damage (NULL for floors)
+	int extralight;             // so gun flashes light up areas
+	int fixedcolormap;          // can be set to REDCOLORMAP, etc
+	int colormap;               // 0-3 for which color to draw player
+	pspdef_t psprites[NUMPSPRITES];     // view sprites (gun, etc)
+	boolean didsecret;          // true if secret level has been done
+	int chickenTics;            // player is a chicken if > 0
+	int chickenPeck;            // chicken peck countdown
+	mobj_t *rain1;              // active rain maker 1
+	mobj_t *rain2;              // active rain maker 2
 } player_t;
 
-#define CF_NOCLIP		1
-#define	CF_GODMODE		2
-#define	CF_NOMOMENTUM	4       // not really a cheat, just a debug aid
+#define CF_NOCLIP               1
+#define CF_GODMODE              2
+#define CF_NOMOMENTUM   4       // not really a cheat, just a debug aid
 
-#define	SBARHEIGHT	42      // status bar height at bottom of screen
+#define SBARHEIGHT      42      // status bar height at bottom of screen
 
 
 /*
 ===============================================================================
 
-					GLOBAL VARIABLES
+										GLOBAL VARIABLES
 
 ===============================================================================
 */
@@ -567,7 +567,7 @@ extern int testcontrols_mousespeed;
 /*
 ===============================================================================
 
-					GLOBAL FUNCTIONS
+										GLOBAL FUNCTIONS
 
 ===============================================================================
 */
@@ -604,30 +604,30 @@ byte *I_AllocLow(int length);
 #if 0
 extern boolean useexterndriver;
 
-#define EBT_FIRE			1
-#define EBT_OPENDOOR 		2
-#define EBT_SPEED			4
-#define EBT_STRAFE			8
-#define EBT_MAP				0x10
-#define EBT_INVENTORYLEFT 	0x20
-#define EBT_INVENTORYRIGHT 	0x40
-#define EBT_USEARTIFACT		0x80
-#define EBT_FLYDROP			0x100
-#define EBT_CENTERVIEW		0x200
-#define EBT_PAUSE			0x400
-#define EBT_WEAPONCYCLE 	0x800
+#define EBT_FIRE                        1
+#define EBT_OPENDOOR            2
+#define EBT_SPEED                       4
+#define EBT_STRAFE                      8
+#define EBT_MAP                         0x10
+#define EBT_INVENTORYLEFT       0x20
+#define EBT_INVENTORYRIGHT      0x40
+#define EBT_USEARTIFACT         0x80
+#define EBT_FLYDROP                     0x100
+#define EBT_CENTERVIEW          0x200
+#define EBT_PAUSE                       0x400
+#define EBT_WEAPONCYCLE         0x800
 
 typedef struct
 {
-    short vector;               // Interrupt vector
+	short vector;               // Interrupt vector
 
-    signed char moveForward;    // forward/backward (maxes at 50)
-    signed char moveSideways;   // strafe (maxes at 24)
-    short angleTurn;            // turning speed (640 [slow] 1280 [fast])
-    short angleHead;            // head angle (+2080 [left] : 0 [center] : -2048 [right])
-    signed char pitch;          // look up/down (-110 : +90)
-    signed char flyDirection;   // flyheight (+1/-1)
-    unsigned short buttons;     // EBT_* flags
+	signed char moveForward;    // forward/backward (maxes at 50)
+	signed char moveSideways;   // strafe (maxes at 24)
+	short angleTurn;            // turning speed (640 [slow] 1280 [fast])
+	short angleHead;            // head angle (+2080 [left] : 0 [center] : -2048 [right])
+	signed char pitch;          // look up/down (-110 : +90)
+	signed char flyDirection;   // flyheight (+1/-1)
+	unsigned short buttons;     // EBT_* flags
 } externdata_t;
 #endif
 
@@ -671,7 +671,7 @@ uint32_t SV_ReadLong(void);
 extern char *savegamedir;
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
-                  char *name);
+				  char *name);
 // only called by startup code
 
 void G_PlayDemo(char *name);
@@ -724,11 +724,11 @@ extern boolean BorderTopRefresh;
 
 extern int UpdateState;
 // define the different areas for the dirty map
-#define I_NOUPDATE	0
-#define I_FULLVIEW	1
-#define I_STATBAR	2
-#define I_MESSAGES	4
-#define I_FULLSCRN	8
+#define I_NOUPDATE      0
+#define I_FULLVIEW      1
+#define I_STATBAR       2
+#define I_MESSAGES      4
+#define I_FULLSCRN      8
 
 void R_RenderPlayerView(player_t * player);
 // called by G_Drawer

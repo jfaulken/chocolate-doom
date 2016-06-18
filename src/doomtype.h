@@ -13,8 +13,8 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Simple basic typedefs, isolated here to make it easier
-//	 separating modules.
+//      Simple basic typedefs, isolated here to make it easier
+//       separating modules.
 //    
 
 
@@ -82,8 +82,8 @@ typedef bool boolean;
 
 typedef enum 
 {
-    false, 
-    true
+	false, 
+	true
 } boolean;
 
 #endif

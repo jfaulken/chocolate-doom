@@ -13,8 +13,8 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Archiving: SaveGame I/O.
-//	Thinker, Ticker.
+//      Archiving: SaveGame I/O.
+//      Thinker, Ticker.
 //
 
 
@@ -24,7 +24,7 @@
 #include "doomstat.h"
 
 
-int	leveltime;
+int     leveltime;
 
 //
 // THINKERS
@@ -37,7 +37,7 @@ int	leveltime;
 
 
 // Both the head and tail of the thinker list.
-thinker_t	thinkercap;
+thinker_t       thinkercap;
 
 
 //
@@ -45,7 +45,7 @@ thinker_t	thinkercap;
 //
 void P_InitThinkers (void)
 {
-    thinkercap.prev = thinkercap.next  = &thinkercap;
+	thinkercap.prev = thinkercap.next  = &thinkercap;
 }
 
 
@@ -57,10 +57,10 @@ void P_InitThinkers (void)
 //
 void P_AddThinker (thinker_t* thinker)
 {
-    thinkercap.prev->next = thinker;
-    thinker->next = &thinkercap;
-    thinker->prev = thinkercap.prev;
-    thinkercap.prev = thinker;
+	thinkercap.prev->next = thinker;
+	thinker->next = &thinkercap;
+	thinker->prev = thinkercap.prev;
+	thinkercap.prev = thinker;
 }
 
 
@@ -82,7 +82,7 @@ void P_RemoveThinker (thinker_t* thinker)
 // P_AllocateThinker
 // Allocates memory and adds a new thinker at the end of the list.
 //
-void P_AllocateThinker (thinker_t*	thinker)
+void P_AllocateThinker (thinker_t*      thinker)
 {
 }
 
@@ -93,27 +93,27 @@ void P_AllocateThinker (thinker_t*	thinker)
 //
 void P_RunThinkers (void)
 {
-    thinker_t *currentthinker, *nextthinker;
+	thinker_t *currentthinker, *nextthinker;
 
-    currentthinker = thinkercap.next;
-    while (currentthinker != &thinkercap)
-    {
-	if ( currentthinker->function.acv == (actionf_v)(-1) )
+	currentthinker = thinkercap.next;
+	while (currentthinker != &thinkercap)
 	{
-	    // time to remove it
-            nextthinker = currentthinker->next;
-	    currentthinker->next->prev = currentthinker->prev;
-	    currentthinker->prev->next = currentthinker->next;
-	    Z_Free(currentthinker);
+		if ( currentthinker->function.acv == (actionf_v)(-1) )
+		{
+			// time to remove it
+			nextthinker = currentthinker->next;
+			currentthinker->next->prev = currentthinker->prev;
+			currentthinker->prev->next = currentthinker->next;
+			Z_Free(currentthinker);
+		}
+		else
+		{
+			if (currentthinker->function.acp1)
+				currentthinker->function.acp1 (currentthinker);
+			nextthinker = currentthinker->next;
+		}
+		currentthinker = nextthinker;
 	}
-	else
-	{
-	    if (currentthinker->function.acp1)
-		currentthinker->function.acp1 (currentthinker);
-            nextthinker = currentthinker->next;
-	}
-	currentthinker = nextthinker;
-    }
 }
 
 
@@ -124,30 +124,30 @@ void P_RunThinkers (void)
 
 void P_Ticker (void)
 {
-    int		i;
-    
-    // run the tic
-    if (paused)
-	return;
-		
-    // pause if in menu and at least one tic has been run
-    if ( !netgame
-	 && menuactive
-	 && !demoplayback
-	 && players[consoleplayer].viewz != 1)
-    {
-	return;
-    }
-    
-		
-    for (i=0 ; i<MAXPLAYERS ; i++)
-	if (playeringame[i])
-	    P_PlayerThink (&players[i]);
-			
-    P_RunThinkers ();
-    P_UpdateSpecials ();
-    P_RespawnSpecials ();
+	int         i;
+	
+	// run the tic
+	if (paused)
+		return;
+				
+	// pause if in menu and at least one tic has been run
+	if ( !netgame
+		 && menuactive
+		 && !demoplayback
+		 && players[consoleplayer].viewz != 1)
+	{
+		return;
+	}
+	
+				
+	for (i=0 ; i<MAXPLAYERS ; i++)
+		if (playeringame[i])
+			P_PlayerThink (&players[i]);
+						
+	P_RunThinkers ();
+	P_UpdateSpecials ();
+	P_RespawnSpecials ();
 
-    // for par times
-    leveltime++;	
+	// for par times
+	leveltime++;        
 }

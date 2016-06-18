@@ -19,25 +19,25 @@
 #define __AMMAP_H__
 
 // For use if I do walls with outsides/insides
-#define REDS		12*8
-#define REDRANGE	1       //16
-#define BLUES		(256-4*16+8)
-#define BLUERANGE	1       //8
-#define GREENS		(33*8)
-#define GREENRANGE	1       //16
-#define GRAYS		(5*8)
-#define GRAYSRANGE	1       //16
-#define BROWNS		(14*8)
-#define BROWNRANGE	1       //16
-#define YELLOWS		10*8
-#define YELLOWRANGE	1
-#define BLACK		0
-#define WHITE		4*8
-#define PARCH		13*8-1
-#define BLOODRED  	177
-#define BLUEKEY 	157
-#define YELLOWKEY 	137
-#define GREENKEY  	198
+#define REDS            12*8
+#define REDRANGE        1       //16
+#define BLUES           (256-4*16+8)
+#define BLUERANGE       1       //8
+#define GREENS          (33*8)
+#define GREENRANGE      1       //16
+#define GRAYS           (5*8)
+#define GRAYSRANGE      1       //16
+#define BROWNS          (14*8)
+#define BROWNRANGE      1       //16
+#define YELLOWS         10*8
+#define YELLOWRANGE     1
+#define BLACK           0
+#define WHITE           4*8
+#define PARCH           13*8-1
+#define BLOODRED        177
+#define BLUEKEY         157
+#define YELLOWKEY       137
+#define GREENKEY        198
 
 // Automap colors
 
@@ -50,24 +50,24 @@
 #define AM_PLR7_COLOR 106       // Hazel
 #define AM_PLR8_COLOR 234       // Purple
 
-#define BACKGROUND	PARCH
-#define YOURCOLORS	WHITE
-#define YOURRANGE	0
-#define WALLCOLORS	REDS
-#define WALLRANGE	REDRANGE
-#define TSWALLCOLORS	GRAYS
-#define TSWALLRANGE	GRAYSRANGE
-#define FDWALLCOLORS	BROWNS
-#define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	YELLOWS
-#define CDWALLRANGE	YELLOWRANGE
-#define THINGCOLORS	GREENS
-#define THINGRANGE	GREENRANGE
+#define BACKGROUND      PARCH
+#define YOURCOLORS      WHITE
+#define YOURRANGE       0
+#define WALLCOLORS      REDS
+#define WALLRANGE       REDRANGE
+#define TSWALLCOLORS    GRAYS
+#define TSWALLRANGE     GRAYSRANGE
+#define FDWALLCOLORS    BROWNS
+#define FDWALLRANGE     BROWNRANGE
+#define CDWALLCOLORS    YELLOWS
+#define CDWALLRANGE     YELLOWRANGE
+#define THINGCOLORS     GREENS
+#define THINGRANGE      GREENRANGE
 #define SECRETWALLCOLORS WALLCOLORS
 #define SECRETWALLRANGE WALLRANGE
-#define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
-#define GRIDRANGE	0
-#define XHAIRCOLORS	GRAYS
+#define GRIDCOLORS      (GRAYS + GRAYSRANGE/2)
+#define GRIDRANGE       0
+#define XHAIRCOLORS     GRAYS
 
 // drawing stuff
 
@@ -79,7 +79,7 @@
 
 #define INITSCALEMTOF (.2*FRACUNIT)     // scale on entry
 // how much the automap moves window per tic in frame-buffer coordinates
-#define F_PANINC	4       // moves 140 pixels in 1 second
+#define F_PANINC        4       // moves 140 pixels in 1 second
 // how much zoom-in per tic
 #define M_ZOOMIN        ((int) (1.02*FRACUNIT)) // goes to 2x in 1 second
 // how much zoom-out per tic
@@ -97,24 +97,24 @@
 
 typedef struct
 {
-    int x, y;
+	int x, y;
 } fpoint_t;
 
 typedef struct
 {
-    fpoint_t a, b;
+	fpoint_t a, b;
 } fline_t;
 
 typedef vertex_t mpoint_t;
 
 typedef struct
 {
-    mpoint_t a, b;
+	mpoint_t a, b;
 } mline_t;
 
 typedef struct
 {
-    fixed_t slp, islp;
+	fixed_t slp, islp;
 } islope_t;
 
 // extern int f_x, f_y, f_w, f_h;

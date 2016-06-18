@@ -13,8 +13,8 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//	Created by a sound utility.
-//	Kept as a sample, DOOM2 sounds.
+//      Created by a sound utility.
+//      Kept as a sample, DOOM2 sounds.
 //
 
 
@@ -29,46 +29,46 @@
 //
 
 #define MUSIC(name) \
-    { name, 0, NULL, NULL }
+	{ name, 0, NULL, NULL }
 
 // villsa [STRIFE]
 musicinfo_t S_music[] =
 {
-    MUSIC(NULL),
-    MUSIC("logo"),
-    MUSIC("action"),
-    MUSIC("tavern"),
-    MUSIC("danger"),
-    MUSIC("fast"),
-    MUSIC("intro"),
-    MUSIC("darker"),
-    MUSIC("strike"),
-    MUSIC("slide"),
-    MUSIC("tribal"),
-    MUSIC("march"),
-    MUSIC("danger"),
-    MUSIC("mood"),
-    MUSIC("castle"),
-    MUSIC("darker"),
-    MUSIC("action"),
-    MUSIC("fight"),
-    MUSIC("spense"),
-    MUSIC("slide"),
-    MUSIC("strike"),
-    MUSIC("dark"),
-    MUSIC("tech"),
-    MUSIC("slide"),
-    MUSIC("drone"),
-    MUSIC("panthr"),
-    MUSIC("sad"),
-    MUSIC("instry"),
-    MUSIC("tech"),
-    MUSIC("action"),
-    MUSIC("instry"),
-    MUSIC("drone"),
-    MUSIC("fight"),
-    MUSIC("happy"),
-    MUSIC("end")
+	MUSIC(NULL),
+	MUSIC("logo"),
+	MUSIC("action"),
+	MUSIC("tavern"),
+	MUSIC("danger"),
+	MUSIC("fast"),
+	MUSIC("intro"),
+	MUSIC("darker"),
+	MUSIC("strike"),
+	MUSIC("slide"),
+	MUSIC("tribal"),
+	MUSIC("march"),
+	MUSIC("danger"),
+	MUSIC("mood"),
+	MUSIC("castle"),
+	MUSIC("darker"),
+	MUSIC("action"),
+	MUSIC("fight"),
+	MUSIC("spense"),
+	MUSIC("slide"),
+	MUSIC("strike"),
+	MUSIC("dark"),
+	MUSIC("tech"),
+	MUSIC("slide"),
+	MUSIC("drone"),
+	MUSIC("panthr"),
+	MUSIC("sad"),
+	MUSIC("instry"),
+	MUSIC("tech"),
+	MUSIC("action"),
+	MUSIC("instry"),
+	MUSIC("drone"),
+	MUSIC("fight"),
+	MUSIC("happy"),
+	MUSIC("end")
 
 
 };
