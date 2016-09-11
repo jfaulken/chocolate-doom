@@ -89,6 +89,8 @@ void    G_DoVictory (void);
 void    G_DoWorldDone (void); 
 void    G_DoSaveGame (void); 
  
+extern int num_player_lives; // d_main.c
+
 // Gamestate the last time G_Ticker was called.
 
 gamestate_t     oldgamestate; 
@@ -229,9 +231,6 @@ int             bodyqueslot;
  
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
-
-// JGM number of times player can restart level before returning to attract screen
-static int player_lives_remain = 1;
 
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -1257,7 +1256,7 @@ void G_DoReborn (int playernum)
 	if (!netgame)
 	{
 		// JGM can only reset level when there are lives remaining
-		if (--player_lives_remain == 0)
+		if (--num_player_lives == 0)
 		{
 			D_StartTitle ();
 		}
@@ -1731,9 +1730,6 @@ void G_DoNewGame (void)
 	consoleplayer = 0;
 	G_InitNew (d_skill, d_episode, d_map); 
 	gameaction = ga_nothing; 
-
-	// JGM reset number of lives
-	player_lives_remain = 3;
 } 
 
 

@@ -58,8 +58,12 @@
 
 #include "m_menu.h"
 
-// JGM d_main.c
-extern int num_credits;
+// JGM allows starting the game
+int num_coins_inserted;
+
+// JGM number of times player can restart level before returning to attract screen
+int num_player_lives;
+
 
 extern patch_t*         hu_font[HU_FONTSIZE];
 extern boolean          message_dontfuckwithme;
@@ -1683,20 +1687,32 @@ boolean M_Responder (event_t* ev)
 	{
 		// JGM any key when not playing will start a new game instead of 
 		// showing menu if credits are inserted
-		if (key == KEYP_ENTER && num_credits > 0)
+		if (key == KEYP_ENTER && num_coins_inserted > 0)
 		{
-			num_credits = 0;
+			num_coins_inserted = 0;
+			num_player_lives = 3;
 			G_DeferedInitNew(sk_hard, 1, 1);
 			M_ClearMenus();
 			return true;
 		}
+		
+		// JGM backslack is nightmare start
+		if (key == '\\' && num_coins_inserted > 0)
+		{
+			num_coins_inserted = 0;
+			num_player_lives = 1;
+			G_DeferedInitNew(sk_nightmare, 1, 1);
+			M_ClearMenus();
+			return true;
+		}
 	
-		// JGM Q key will set num_credits to 1 
+		// JGM Q key will set num_coins_inserted to 1 
 		// TODO do we want >1 credits?
 		if (key == 'q')
 		{
-			S_StartSound(NULL,sfx_oof);
-			num_credits = 1;
+			S_StartSound(NULL,sfx_brssit);
+			num_coins_inserted = 1;
+			return true;
 		}
 	}
 

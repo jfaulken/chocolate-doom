@@ -166,7 +166,7 @@ extern  boolean setsizeneeded;
 extern  int             showMessages;
 void R_ExecuteSetViewSize (void);
 
-int num_credits;
+extern int num_coins_inserted; // JGM d_main.c
 
 void D_Display (void)
 {
@@ -304,7 +304,7 @@ void D_Display (void)
 	// JGM flash PRESS START graphic any time not actually playing
 	if (((gamestate != GS_LEVEL) || demoplayback) && ((I_GetTime() & 16) == 0))
 	{
-		if (num_credits == 0)
+		if (num_coins_inserted == 0)
 		{
 			V_DrawPatchDirect(80, 40, W_CacheLumpName("INCOIN", PU_CACHE));
 		}
