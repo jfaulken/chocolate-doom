@@ -1679,7 +1679,8 @@ boolean M_Responder (event_t* ev)
 	}
 
 	// JGM esc is hot exit key
-	if( key == key_menu_activate ) {
+	if( key == key_menu_activate ) 
+	{
 		I_Quit();
 	}
 

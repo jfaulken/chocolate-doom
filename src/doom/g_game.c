@@ -1251,6 +1251,7 @@ void G_DeathMatchSpawnPlayer (int playernum)
 //
 // G_DoReborn 
 // 
+void M_ClearMenus();
 void G_DoReborn (int playernum) 
 { 
 	int                             i; 
@@ -1260,12 +1261,15 @@ void G_DoReborn (int playernum)
 		// JGM can only reset level when there are lives remaining
 		if (--num_player_lives == 0)
 		{
+			M_ClearMenus();
 			D_StartTitle();
 		}
 		else
 		{
 			// JGM load last checkpoint
-			G_LoadGame("doomsav0.dsg");
+			char name[256];
+			M_StringCopy(name, P_SaveGameFile(0), sizeof(name));
+			G_LoadGame (name);
 		}
 	}
 	else 
