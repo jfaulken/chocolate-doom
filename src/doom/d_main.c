@@ -301,8 +301,8 @@ void D_Display (void)
 	NetUpdate ();         // send out any new accumulation
 
 
-	// JGM flash PRESS START graphic any time not actually playing
-	if (((gamestate != GS_LEVEL) || demoplayback) && ((I_GetTime() & 16) == 0))
+	// JGM flash PRESS START during demo screen
+	if ((gamestate == GS_DEMOSCREEN || demoplayback) && (I_GetTime() & 16) == 0)
 	{
 		if (num_coins_inserted == 0)
 		{
@@ -313,7 +313,6 @@ void D_Display (void)
 			V_DrawPatchDirect(80, 40, W_CacheLumpName("PRSTART", PU_CACHE));
 		}
 	}
-
 	
 	// normal update
 	if (!wipe)

@@ -72,7 +72,6 @@
 
 #include "g_game.h"
 
-
 #define SAVEGAMESIZE    0x2c000
 
 void    G_ReadDemoTiccmd (ticcmd_t* cmd); 
@@ -672,6 +671,9 @@ void G_DoLoadLevel (void)
 	{
 		players[consoleplayer].message = "Press escape to quit.";
 	}
+
+	// JGM always save at start of map so it can be loaded on death
+	G_SaveGame(0, "arcade");
 } 
 
 static void SetJoyButtons(unsigned int buttons_mask)
@@ -1258,12 +1260,12 @@ void G_DoReborn (int playernum)
 		// JGM can only reset level when there are lives remaining
 		if (--num_player_lives == 0)
 		{
-			D_StartTitle ();
+			D_StartTitle();
 		}
 		else
 		{
-			// reload the level from scratch
-			gameaction = ga_loadlevel; 
+			// JGM load last checkpoint
+			G_LoadGame("doomsav0.dsg");
 		}
 	}
 	else 
