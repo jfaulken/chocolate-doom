@@ -166,6 +166,8 @@ extern  boolean setsizeneeded;
 extern  int             showMessages;
 void R_ExecuteSetViewSize (void);
 
+int num_credits;
+
 void D_Display (void)
 {
 	static  boolean             viewactivestate = false;
@@ -301,7 +303,16 @@ void D_Display (void)
 
 	// JGM flash PRESS START graphic any time not actually playing
 	if (((gamestate != GS_LEVEL) || demoplayback) && ((I_GetTime() & 16) == 0))
-		V_DrawPatchDirect(80, 40, W_CacheLumpName("PRSTART", PU_CACHE));
+	{
+		if (num_credits == 0)
+		{
+			V_DrawPatchDirect(80, 40, W_CacheLumpName("INCOIN", PU_CACHE));
+		}
+		else
+		{
+			V_DrawPatchDirect(80, 40, W_CacheLumpName("PRSTART", PU_CACHE));
+		}
+	}
 
 	
 	// normal update

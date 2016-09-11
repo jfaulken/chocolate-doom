@@ -58,6 +58,8 @@
 
 #include "m_menu.h"
 
+// JGM d_main.c
+extern int num_credits;
 
 extern patch_t*         hu_font[HU_FONTSIZE];
 extern boolean          message_dontfuckwithme;
@@ -1677,13 +1679,27 @@ boolean M_Responder (event_t* ev)
 		I_Quit();
 	}
 
-	// JGM any key when not playing will start a new game instead of showing menu
-	if ((gamestate != GS_LEVEL) || demoplayback)
+	if ( gamestate != GS_LEVEL || demoplayback )
 	{
-		G_DeferedInitNew(sk_hard, 1, 1);
-		M_ClearMenus();
-		return true;
+		// JGM any key when not playing will start a new game instead of 
+		// showing menu if credits are inserted
+		if (key == KEYP_ENTER && num_credits > 0)
+		{
+			num_credits = 0;
+			G_DeferedInitNew(sk_hard, 1, 1);
+			M_ClearMenus();
+			return true;
+		}
+	
+		// JGM Q key will set num_credits to 1 
+		// TODO do we want >1 credits?
+		if (key == 'q')
+		{
+			S_StartSound(NULL,sfx_oof);
+			num_credits = 1;
+		}
 	}
+
 
 	return false;
 
