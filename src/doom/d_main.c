@@ -221,8 +221,13 @@ void D_Display (void)
 			redrawsbar = true;
 		if (inhelpscreensstate && !inhelpscreens)
 			redrawsbar = true; // just put away the help screen
-		ST_Drawer(viewheight == SCREENHEIGHT, redrawsbar);
 		fullscreen = viewheight == SCREENHEIGHT;
+
+		// JGM in fullscreen, status bar is draw after everything else
+		if (!fullscreen || automapactive) 
+		{
+			ST_Drawer(false, redrawsbar);
+		}
 		break;
 
 	case GS_INTERMISSION:
@@ -300,6 +305,11 @@ void D_Display (void)
 	M_Drawer ();          // menu is drawn even on top of everything
 	NetUpdate ();         // send out any new accumulation
 
+	// JGM draw status bar in fullscreen on top of everything
+	if (gamestate == GS_LEVEL && fullscreen && !automapactive) 
+	{
+		ST_Drawer(true, redrawsbar);
+	}
 
 	// JGM flash PRESS START during demo screen
 	if ((gamestate == GS_DEMOSCREEN || demoplayback) && (I_GetTime() & 16) == 0)

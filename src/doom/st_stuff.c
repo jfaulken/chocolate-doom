@@ -266,7 +266,8 @@ byte                   *st_backing_screen;
 static player_t*        plyr; 
 
 // ST_Start() has just been called
-static boolean          st_firsttime;
+// JGM this was used for optimized drawing and is not used anymore
+static boolean          st_firsttime; 
 
 // lump number for PLAYPAL
 static int              lu_palette;
@@ -285,6 +286,9 @@ static st_stateenum_t   st_gamestate;
 
 // whether left-side main status bar is active
 static boolean          st_statusbaron;
+
+// JGM a flag for easily disabling things in arcade
+static boolean			st_arcade = false;
 
 // whether status bar chat is active
 static boolean          st_chat;
@@ -384,6 +388,9 @@ static int      keyboxes[3];
 
 // a random number per tick
 static int      st_randomnumber;  
+
+// JGM a global for st_lib to avoid passing a boolean to every single function
+boolean st_fullscreen;
 
 cheatseq_t cheat_mus = CHEAT("idmus", 2);
 cheatseq_t cheat_god = CHEAT("iddqd", 0);
@@ -1037,7 +1044,11 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updatePercent(&w_health, refresh);
 	STlib_updatePercent(&w_armor, refresh);
 
-	STlib_updateBinIcon(&w_armsbg, refresh);
+	// JGM don't draw arms background in fullscren
+	// doing it this way was easier than doing it properly through the 
+	// normal st_binicon enable flag
+	if (!st_fullscreen)
+		STlib_updateBinIcon(&w_armsbg, refresh);
 
 	for (i=0;i<6;i++)
 		STlib_updateMultIcon(&w_arms[i], refresh);
@@ -1051,19 +1062,6 @@ void ST_drawWidgets(boolean refresh)
 
 }
 
-void ST_doRefresh(void)
-{
-
-	st_firsttime = false;
-
-	// draw status bar background to off-screen buff
-	ST_refreshBackground();
-
-	// and refresh all widgets
-	ST_drawWidgets(true);
-
-}
-
 void ST_diffDraw(void)
 {
 	// update all widgets
@@ -1072,18 +1070,36 @@ void ST_diffDraw(void)
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
-  
-	st_statusbaron = (!fullscreen) || automapactive;
+	st_fullscreen = fullscreen;
+
+	// JGM always draw status bar 
+	st_statusbaron = true; 
+
 	st_firsttime = st_firsttime || refresh;
 
 	// Do red-/gold-shifts from damage/items
 	ST_doPaletteStuff();
 
-	// If just after ST_Start(), refresh all
-	if (st_firsttime) ST_doRefresh();
-	// Otherwise, update as little as possible
-	else ST_diffDraw();
-
+	// Refresh all widgets
+	if (st_fullscreen) 
+	{
+		// JGM draw fullscreen status bar as full refresh with no background
+		ST_drawWidgets(true);
+	}
+	else
+	{
+		// JGM when not fullscreen, do what chocolate did
+		if ( st_firsttime )
+		{
+			ST_refreshBackground();
+			ST_drawWidgets(true);
+			st_firsttime = false;
+		}
+		else  
+		{
+			ST_diffDraw();
+		}
+	}
 }
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
