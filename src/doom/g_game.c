@@ -229,7 +229,10 @@ int             bodyqueslot;
  
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
- 
+
+// JGM number of times player can restart level before returning to attract screen
+static int player_lives_remain = 1;
+
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
 	size_t              i;
@@ -1253,8 +1256,16 @@ void G_DoReborn (int playernum)
 		 
 	if (!netgame)
 	{
-		// reload the level from scratch
-		gameaction = ga_loadlevel;  
+		// JGM can only reset level when there are lives remaining
+		if (--player_lives_remain == 0)
+		{
+			D_StartTitle ();
+		}
+		else
+		{
+			// reload the level from scratch
+			gameaction = ga_loadlevel; 
+		}
 	}
 	else 
 	{
@@ -1720,6 +1731,9 @@ void G_DoNewGame (void)
 	consoleplayer = 0;
 	G_InitNew (d_skill, d_episode, d_map); 
 	gameaction = ga_nothing; 
+
+	// JGM reset number of lives
+	player_lives_remain = 3;
 } 
 
 
