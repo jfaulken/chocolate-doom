@@ -1443,7 +1443,7 @@ void D_DoomMain (void)
 				if (!M_FileExists("arcade.wad"))
 				{
 						I_Error("Can't find arcade.wad");
-						return -1;
+						return;
 				}
 				printf(" adding arcade.wad\n");
 				W_AddFile("arcade.wad");

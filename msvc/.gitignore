@@ -8,3 +8,5 @@ strfsav*
 SDL*
 begin_code.h
 close_code.h
+*.db
+*.opendb

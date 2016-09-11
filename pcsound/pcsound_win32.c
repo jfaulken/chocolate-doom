@@ -59,7 +59,7 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
     // stupid.
    
     return 0;
-
+	/*
     // Find the OS version
 
     osvi.dwOSVersionInfoSize = sizeof(osvi);
@@ -90,6 +90,7 @@ static int PCSound_Win32_Init(pcsound_callback_func callback_func)
     sound_thread_handle = SDL_CreateThread(SoundThread, NULL);
 
     return 1;
+	*/
 }
 
 static void PCSound_Win32_Shutdown(void)

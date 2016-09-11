@@ -309,7 +309,7 @@ R_PointToAngle
 			if (x>y)
 			{
 				// octant 8
-				return -tantoangle[SlopeDiv(y,x)];
+				return UINT_MAX - tantoangle[SlopeDiv(y,x)];
 			}
 			else
 			{
