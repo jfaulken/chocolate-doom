@@ -1672,6 +1672,11 @@ boolean M_Responder (event_t* ev)
 		}
 	}
 
+	// JGM esc is hot exit key
+	if( key == key_menu_activate ) {
+		I_Quit();
+	}
+
 	// JGM any key when not playing will start a new game instead of showing menu
 	if ((gamestate != GS_LEVEL) || demoplayback)
 	{
@@ -1679,6 +1684,7 @@ boolean M_Responder (event_t* ev)
 		M_ClearMenus();
 		return true;
 	}
+
 	return false;
 
 	// JGM disable menu navigation code
