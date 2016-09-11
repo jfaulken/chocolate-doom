@@ -12,13 +12,13 @@ config.hin
 config.log
 config.status
 configure
-lib
 obj
 rpm.spec
 stamp-h
 stamp-h.in
 stamp-h1
 tags
+lib/*
 
 # These are the default patterns globally ignored by Subversion:
 *.o
