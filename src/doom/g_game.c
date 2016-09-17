@@ -231,6 +231,34 @@ int             bodyqueslot;
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
 
+// JGM save checkpoint
+void G_SaveArcadeCheckpoint() 
+{
+	// NOTE doing this with ga_savegame doesn't work on the first frame because
+	// it's implemented as a button press, and the player's button presses are ignored
+	// on the first frame (or something like that).
+	savegameslot = 0;
+	M_StringCopy(savedescription, "arcade", sizeof(savedescription));
+	G_DoSaveGame();
+}
+
+// JGM load checkpoint
+void G_LoadArcadeCheckpoint() 
+{
+	char name[256];
+	M_StringCopy(name, P_SaveGameFile(0), sizeof(name));
+	G_LoadGame (name);
+}
+
+// JGM try to fix problems with wrapping tics
+void G_ResetTics()
+{
+	extern int maketic, recvtic; // d_loop.c
+	gametic = maketic = recvtic = 0; 
+}
+
+
+
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
 	size_t              i;
@@ -671,9 +699,6 @@ void G_DoLoadLevel (void)
 	{
 		players[consoleplayer].message = "Press escape to quit.";
 	}
-
-	// JGM always save at start of map so it can be loaded on death
-	G_SaveGame(0, "arcade");
 } 
 
 static void SetJoyButtons(unsigned int buttons_mask)
@@ -872,7 +897,8 @@ void G_Ticker (void)
 		switch (gameaction) 
 		{ 
 		  case ga_loadlevel: 
-			G_DoLoadLevel (); 
+			// JGM ga_loadlevel never happens in doom, G_DoLoadLevel is called directly
+			G_DoLoadLevel ();  
 			break; 
 		  case ga_newgame: 
 			G_DoNewGame (); 
@@ -1267,9 +1293,7 @@ void G_DoReborn (int playernum)
 		else
 		{
 			// JGM load last checkpoint
-			char name[256];
-			M_StringCopy(name, P_SaveGameFile(0), sizeof(name));
-			G_LoadGame (name);
+			G_LoadArcadeCheckpoint();
 		}
 	}
 	else 
@@ -1531,7 +1555,7 @@ void G_WorldDone (void)
 		}
 	}
 } 
- 
+
 void G_DoWorldDone (void) 
 {        
 	gamestate = GS_LEVEL; 
@@ -1539,6 +1563,12 @@ void G_DoWorldDone (void)
 	G_DoLoadLevel (); 
 	gameaction = ga_nothing; 
 	viewactive = true; 
+
+	// JGM try to fix problems with wrapping tics
+	G_ResetTics();
+
+	// JGM always save at start of map so it can be loaded on death
+	G_SaveArcadeCheckpoint();
 } 
  
 
@@ -1736,6 +1766,9 @@ void G_DoNewGame (void)
 	consoleplayer = 0;
 	G_InitNew (d_skill, d_episode, d_map); 
 	gameaction = ga_nothing; 
+
+	// JGM always save at start of map so it can be loaded on death
+	G_SaveArcadeCheckpoint();
 } 
 
 
@@ -2170,6 +2203,9 @@ void G_DoPlayDemo (void)
 	skill_t skill; 
 	int             i, episode, map; 
 	int demoversion;
+
+	// JGM try to fix problems with wrapping tics
+	G_ResetTics();
 		 
 	gameaction = ga_nothing; 
 	demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 

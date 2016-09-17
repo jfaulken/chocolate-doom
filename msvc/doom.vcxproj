@@ -74,6 +74,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <DisableSpecificWarnings>4244;4127;4100;4018;4389</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;SDL_mixer.lib;SDL_net.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -104,6 +105,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <DisableSpecificWarnings>4244;4127;4100;4018;4389</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL.lib;SDL_mixer.lib;SDL_net.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -170,6 +172,7 @@
     <ClInclude Include="..\src\doom\r_sky.h" />
     <ClInclude Include="..\src\doom\r_state.h" />
     <ClInclude Include="..\src\doom\r_things.h" />
+    <ClInclude Include="..\src\doom\sc_score.h" />
     <ClInclude Include="..\src\doom\sounds.h" />
     <ClInclude Include="..\src\doom\statdump.h" />
     <ClInclude Include="..\src\doom\st_lib.h" />
@@ -283,6 +286,7 @@
     <ClCompile Include="..\src\doom\r_segs.c" />
     <ClCompile Include="..\src\doom\r_sky.c" />
     <ClCompile Include="..\src\doom\r_things.c" />
+    <ClCompile Include="..\src\doom\sc_score.c" />
     <ClCompile Include="..\src\doom\sounds.c" />
     <ClCompile Include="..\src\doom\statdump.c" />
     <ClCompile Include="..\src\doom\st_lib.c" />

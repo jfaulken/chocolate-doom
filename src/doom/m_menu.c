@@ -1344,7 +1344,7 @@ boolean M_Responder (event_t* ev)
 {
 	int             ch;
 	int             key;
-	int             i;
+	//int             i;
 	static  int     joywait = 0;
 	static  int     mousewait = 0;
 	static  int     mousey = 0;
@@ -1885,9 +1885,9 @@ void M_StartControlPanel (void)
 
 // Display OPL debug messages - hack for GENMIDI development.
 
+void I_OPL_DevMessages(char *, size_t);
 static void M_DrawOPLDev(void)
 {
-	extern void I_OPL_DevMessages(char *, size_t);
 	char debug[1024];
 	char *curr, *p;
 	int line;

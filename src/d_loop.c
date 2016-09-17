@@ -67,11 +67,11 @@ static ticcmd_set_t ticdata[BACKUPTICS];
 
 // The index of the next tic to be made (with a call to BuildTiccmd).
 
-static int maketic;
+int maketic;
 
 // The number of complete tics received from the server so far.
 
-static int recvtic;
+int recvtic;
 
 // The number of tics that have been run (using RunTic) so far.
 
