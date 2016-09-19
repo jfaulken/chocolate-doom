@@ -3,6 +3,7 @@ AM_CFLAGS = -I$(top_srcdir)/src @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 noinst_LIBRARIES=libdoom.a
 
 SOURCE_FILES=                   \
+sc_score.c	   sc_score.h	\
 am_map.c           am_map.h     \
                    d_englsh.h   \
 d_items.c          d_items.h    \
