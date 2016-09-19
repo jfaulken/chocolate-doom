@@ -46,6 +46,7 @@
 
 // Data.
 #include "sounds.h"
+#include "sc_score.h"
 
 
 //
@@ -1059,6 +1060,7 @@ void P_PlayerInSpecialSector (player_t* player)
 		// SECRET SECTOR
 		player->secretcount++;
 		sector->special = 0;
+		SC_OnTouchSecretSector();
 		break;
 						
 	  case 11:

@@ -38,7 +38,7 @@
 #include "s_sound.h"
 
 #include "p_inter.h"
-
+#include "sc_score.h"
 
 #define BONUSADD        6
 
@@ -98,6 +98,8 @@ P_GiveAmmo
 
 	if (player->ammo[ammo] > player->maxammo[ammo])
 		player->ammo[ammo] = player->maxammo[ammo];
+
+	SC_OnGetAmmo( ammo, num );
 
 	// If non zero ammo, 
 	// don't change up weapons,
@@ -206,8 +208,9 @@ P_GiveWeapon
 		gaveweapon = true;
 		player->weaponowned[weapon] = true;
 		player->pendingweapon = weapon;
+		SC_OnGetWeapon( weapon, dropped );
 	}
-		
+
 	return (gaveweapon || gaveammo);
 }
 
@@ -230,6 +233,7 @@ P_GiveBody
 		player->health = MAXHEALTH;
 	player->mo->health = player->health;
 		
+	SC_OnGetHealth( num );
 	return true;
 }
 
@@ -253,6 +257,8 @@ P_GiveArmor
 				
 	player->armortype = armortype;
 	player->armorpoints = hits;
+
+	SC_OnGetArmor( hits );
 		
 	return true;
 }
@@ -272,6 +278,7 @@ P_GiveCard
 	
 	player->bonuscount = BONUSADD;
 	player->cards[card] = 1;
+	SC_OnGetKey( (int) card );
 }
 
 
@@ -286,6 +293,7 @@ P_GivePower
 	if (power == pw_invulnerability)
 	{
 		player->powers[power] = INVULNTICS;
+		SC_OnGetPowerup( power );
 		return true;
 	}
 	
@@ -293,18 +301,21 @@ P_GivePower
 	{
 		player->powers[power] = INVISTICS;
 		player->mo->flags |= MF_SHADOW;
+		SC_OnGetPowerup( power );
 		return true;
 	}
 	
 	if (power == pw_infrared)
 	{
 		player->powers[power] = INFRATICS;
+		SC_OnGetPowerup( power );
 		return true;
 	}
 	
 	if (power == pw_ironfeet)
 	{
 		player->powers[power] = IRONTICS;
+		SC_OnGetPowerup( power );
 		return true;
 	}
 	
@@ -312,6 +323,7 @@ P_GivePower
 	{
 		P_GiveBody (player, 100);
 		player->powers[power] = 1;
+		SC_OnGetPowerup( power );
 		return true;
 	}
 		
@@ -319,6 +331,7 @@ P_GivePower
 		return false;   // already got it
 				
 	player->powers[power] = 1;
+	SC_OnGetPowerup( power );
 	return true;
 }
 
@@ -378,6 +391,7 @@ P_TouchSpecialThing
 			player->health = deh_max_health;
 		player->mo->health = player->health;
 		player->message = DEH_String(GOTHTHBONUS);
+		SC_OnGetHealth( 1 );
 		break;
 		
 	  case SPR_BON2:
@@ -389,6 +403,7 @@ P_TouchSpecialThing
 		if (!player->armortype)
 			player->armortype = 1;
 		player->message = DEH_String(GOTARMBONUS);
+		SC_OnGetArmor( 1 );
 		break;
 		
 	  case SPR_SOUL:
@@ -398,6 +413,7 @@ P_TouchSpecialThing
 		player->mo->health = player->health;
 		player->message = DEH_String(GOTSUPER);
 		sound = sfx_getpow;
+		SC_OnGetHealth( deh_soulsphere_health );
 		break;
 		
 	  case SPR_MEGA:
@@ -410,6 +426,7 @@ P_TouchSpecialThing
 		P_GiveArmor (player, 2);
 		player->message = DEH_String(GOTMSPHERE);
 		sound = sfx_getpow;
+		SC_OnGetHealth( deh_megasphere_health );
 		break;
 		
 		// cards
@@ -592,6 +609,7 @@ P_TouchSpecialThing
 		for (i=0 ; i<NUMAMMO ; i++)
 			P_GiveAmmo (player, i, 1);
 		player->message = DEH_String(GOTBACKPACK);
+		SC_OnGetBackpack();
 		break;
 		
 		// weapons
@@ -670,7 +688,9 @@ P_KillMobj
 {
 	mobjtype_t  item;
 	mobj_t*     mo;
-		
+	
+	SC_OnMobjKilled( source, target );
+
 	target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
 
 	if (target->type != MT_SKULL)
@@ -786,7 +806,7 @@ P_DamageMobj
 	unsigned    ang;
 	int         saved;
 	player_t*   player;
-	fixed_t     thrust;
+	fixed_t     thrust = 0;
 	int         temp;
 		
 	if ( !(target->flags & MF_SHOOTABLE) )
@@ -888,6 +908,8 @@ P_DamageMobj
 			I_Tactile (40,10,40+temp*2);
 	}
 	
+	SC_OnMobjDamaged( target, inflictor, source, damage, thrust );
+
 	// do the damage    
 	target->health -= damage;   
 	if (target->health <= 0)

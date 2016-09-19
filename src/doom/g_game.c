@@ -71,6 +71,7 @@
 
 
 #include "g_game.h"
+#include "sc_score.h"
 
 #define SAVEGAMESIZE    0x2c000
 
@@ -1287,6 +1288,7 @@ void G_DoReborn (int playernum)
 		// JGM can only reset level when there are lives remaining
 		if (--num_player_lives == 0)
 		{
+			SC_FinalizeRecord("noname");
 			M_ClearMenus();
 			D_StartTitle();
 		}
@@ -1569,6 +1571,7 @@ void G_DoWorldDone (void)
 
 	// JGM always save at start of map so it can be loaded on death
 	G_SaveArcadeCheckpoint();
+	SC_OnNextMap(wminfo.maxkills, wminfo.maxitems, wminfo.maxsecret);
 } 
  
 
@@ -1769,6 +1772,7 @@ void G_DoNewGame (void)
 
 	// JGM always save at start of map so it can be loaded on death
 	G_SaveArcadeCheckpoint();
+	SC_BeginNewRecord( d_skill == sk_nightmare );
 } 
 
 

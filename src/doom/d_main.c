@@ -76,6 +76,8 @@
 
 #include "d_main.h"
 
+#include "sc_score.h"
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -481,6 +483,8 @@ void D_DoomLoop (void)
 	R_ExecuteSetViewSize();
 
 	D_StartGameLoop();
+	
+	SC_Init();
 
 	if (testcontrols)
 	{
@@ -1458,16 +1462,16 @@ void D_DoomMain (void)
 
 	W_CheckCorrectIWAD(doom);
 
-		// JGM always load aracde.wad
+	// JGM always load aracde.wad
+	{
+		if (!M_FileExists("arcade.wad"))
 		{
-				if (!M_FileExists("arcade.wad"))
-				{
-						I_Error("Can't find arcade.wad");
-						return;
-				}
-				printf(" adding arcade.wad\n");
-				W_AddFile("arcade.wad");
+			I_Error("Can't find arcade.wad");
+			return;
 		}
+		printf(" adding arcade.wad\n");
+		W_AddFile("arcade.wad");
+	}
 		
 	// Now that we've loaded the IWAD, we can figure out what gamemission
 	// we're playing and which version of Vanilla Doom we need to emulate.

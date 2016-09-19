@@ -58,6 +58,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "sc_score.h"
+
 //
 // STATUS BAR DATA
 //

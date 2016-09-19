@@ -39,3 +39,4 @@ lib/*
 nbproject
 
 *.dsg
+/arcade/arcade_records.txt
