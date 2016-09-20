@@ -368,6 +368,7 @@ static st_number_t      w_ammo[4];
 // max ammo widgets
 static st_number_t      w_maxammo[4]; 
 
+static st_number_t		w_score;
 
 
  // number of frags so far in deathmatch
@@ -390,6 +391,8 @@ static int      keyboxes[3];
 
 // a random number per tick
 static int      st_randomnumber;  
+
+static int		st_score;
 
 // JGM a global for st_lib to avoid passing a boolean to every single function
 boolean st_fullscreen;
@@ -886,7 +889,7 @@ void ST_updateFaceWidget(void)
 
 void ST_updateWidgets(void)
 {
-	static int  largeammo = 1994; // means "n/a"
+	static int  largeammo = INT_MAX; // means "n/a"
 	int         i;
 
 	// must redirect the pointer if the ready weapon has changed.
@@ -953,6 +956,7 @@ void ST_Ticker (void)
 
 	st_clock++;
 	st_randomnumber = M_Random();
+	st_score = (int)*sc_current_score;
 	ST_updateWidgets();
 	st_oldhealth = plyr->health;
 
@@ -1062,6 +1066,8 @@ void ST_drawWidgets(boolean refresh)
 
 	STlib_updateNum(&w_frags, refresh);
 
+	// JGM draw score
+	STlib_updateNum(&w_score, refresh);
 }
 
 void ST_diffDraw(void)
@@ -1417,6 +1423,14 @@ void ST_createWidgets(void)
 				  &plyr->maxammo[3],
 				  &st_statusbaron,
 				  ST_MAXAMMO3WIDTH);
+
+	STlib_initNum(	&w_score,
+					256,
+					0,
+					tallnum,
+					&st_score,
+					&st_statusbaron,
+					10 ); // num digits
 
 }
 

@@ -76,7 +76,7 @@ extern boolean          chat_on;                // in heads-up code
 int                     mouseSensitivity = 5;
 
 // Show messages has default, 0 = off, 1 = on
-int                     showMessages = 1;
+int                     showMessages = 0;
 		
 
 // Blocky mode, has default, 0 = high, 1 = normal

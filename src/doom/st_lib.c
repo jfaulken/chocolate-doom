@@ -123,7 +123,7 @@ STlib_drawNum
 	}
 
 	// if non-number, do not draw it
-	if (num == 1994)
+	if (num == INT_MAX)
 		return;
 
 	x = n->x;
