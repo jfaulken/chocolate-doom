@@ -74,11 +74,32 @@ void SC_Init()
 	fclose( f );
 }
 
+const sc_record_t * SC_GetHighScore()
+{
+	// TODO OPT
+	static sc_record_t result;
+	sc_record_t * high = &sc_records[0];
+	if ( s_state.score > high->score )
+	{
+		result.score = s_state.score;
+		result.duration_sec = 0; // TODO TIME
+		result.name[0] = 'Y';
+		result.name[1] = 'O';
+		result.name[2] = 'U';
+		result.name[3] = 0;
+	}
+	else
+	{
+		result = *high;
+	}
+	return &result;
+}
+
 void SC_BeginNewRecord( boolean is_nightmare )
 {
 	memset( &s_state, 0, sizeof( s_state ) );
 	s_state.is_nightmare = is_nightmare;
-	s_state.score = 1; //TEMP
+	s_state.score = 0;
 }
 
 int SC_FinalizeRecord( char * player_name )

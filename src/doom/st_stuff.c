@@ -369,6 +369,7 @@ static st_number_t      w_ammo[4];
 static st_number_t      w_maxammo[4]; 
 
 static st_number_t		w_score;
+static st_number_t		w_highscore;
 
 
  // number of frags so far in deathmatch
@@ -392,7 +393,7 @@ static int      keyboxes[3];
 // a random number per tick
 static int      st_randomnumber;  
 
-static int		st_score;
+static int		st_highscore;
 
 // JGM a global for st_lib to avoid passing a boolean to every single function
 boolean st_fullscreen;
@@ -953,10 +954,9 @@ void ST_updateWidgets(void)
 
 void ST_Ticker (void)
 {
-
 	st_clock++;
 	st_randomnumber = M_Random();
-	st_score = (int)*sc_current_score;
+	st_highscore = SC_GetHighScore()->score;
 	ST_updateWidgets();
 	st_oldhealth = plyr->health;
 
@@ -1068,12 +1068,13 @@ void ST_drawWidgets(boolean refresh)
 
 	// JGM draw score
 	STlib_updateNum(&w_score, refresh);
+	STlib_updateNum(&w_highscore, refresh);
 }
 
 void ST_diffDraw(void)
 {
 	// update all widgets
-	ST_drawWidgets(false);
+	ST_drawWidgets(true); // JGM always pass true until background fill can be fixed
 }
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
@@ -1278,7 +1279,8 @@ void ST_createWidgets(void)
 				  tallnum,
 				  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
 				  &st_statusbaron,
-				  ST_AMMOWIDTH );
+				  ST_AMMOWIDTH,
+				  false );
 
 	// the last weapon type
 	w_ready.data = plyr->readyweapon; 
@@ -1290,7 +1292,8 @@ void ST_createWidgets(void)
 					  tallnum,
 					  &plyr->health,
 					  &st_statusbaron,
-					  tallpercent);
+					  tallpercent,
+					  false );
 
 	// arms background
 	STlib_initBinIcon(&w_armsbg,
@@ -1318,7 +1321,8 @@ void ST_createWidgets(void)
 				  tallnum,
 				  &st_fragscount,
 				  &st_fragson,
-				  ST_FRAGSWIDTH);
+				  ST_FRAGSWIDTH,
+				  false );
 
 	// faces
 	STlib_initMultIcon(&w_faces,
@@ -1334,7 +1338,9 @@ void ST_createWidgets(void)
 					  ST_ARMORY,
 					  tallnum,
 					  &plyr->armorpoints,
-					  &st_statusbaron, tallpercent);
+					  &st_statusbaron, 
+					  tallpercent,
+					  false );
 
 	// keyboxes 0-2
 	STlib_initMultIcon(&w_keyboxes[0],
@@ -1365,7 +1371,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->ammo[0],
 				  &st_statusbaron,
-				  ST_AMMO0WIDTH);
+				  ST_AMMO0WIDTH,
+				  false );
 
 	STlib_initNum(&w_ammo[1],
 				  ST_AMMO1X,
@@ -1373,7 +1380,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->ammo[1],
 				  &st_statusbaron,
-				  ST_AMMO1WIDTH);
+				  ST_AMMO1WIDTH,
+				  false );
 
 	STlib_initNum(&w_ammo[2],
 				  ST_AMMO2X,
@@ -1381,7 +1389,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->ammo[2],
 				  &st_statusbaron,
-				  ST_AMMO2WIDTH);
+				  ST_AMMO2WIDTH,
+				  false );
 	
 	STlib_initNum(&w_ammo[3],
 				  ST_AMMO3X,
@@ -1389,7 +1398,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->ammo[3],
 				  &st_statusbaron,
-				  ST_AMMO3WIDTH);
+				  ST_AMMO3WIDTH,
+				  false );
 
 	// max ammo count (all four kinds)
 	STlib_initNum(&w_maxammo[0],
@@ -1398,7 +1408,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->maxammo[0],
 				  &st_statusbaron,
-				  ST_MAXAMMO0WIDTH);
+				  ST_MAXAMMO0WIDTH,
+				  false );
 
 	STlib_initNum(&w_maxammo[1],
 				  ST_MAXAMMO1X,
@@ -1406,7 +1417,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->maxammo[1],
 				  &st_statusbaron,
-				  ST_MAXAMMO1WIDTH);
+				  ST_MAXAMMO1WIDTH,
+				  false );
 
 	STlib_initNum(&w_maxammo[2],
 				  ST_MAXAMMO2X,
@@ -1414,7 +1426,8 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->maxammo[2],
 				  &st_statusbaron,
-				  ST_MAXAMMO2WIDTH);
+				  ST_MAXAMMO2WIDTH,
+				  false );
 	
 	STlib_initNum(&w_maxammo[3],
 				  ST_MAXAMMO3X,
@@ -1422,15 +1435,26 @@ void ST_createWidgets(void)
 				  shortnum,
 				  &plyr->maxammo[3],
 				  &st_statusbaron,
-				  ST_MAXAMMO3WIDTH);
+				  ST_MAXAMMO3WIDTH,
+				  false );
 
-	STlib_initNum(	&w_score,
-					256,
-					0,
-					tallnum,
-					&st_score,
-					&st_statusbaron,
-					10 ); // num digits
+	STlib_initNum(&w_score,
+				  2,
+				  2,
+				  tallnum,
+				  (int*) sc_current_score,
+				  &st_statusbaron,
+				  10,  // num digits
+				  true );
+
+	STlib_initNum(&w_highscore,
+				  318,
+				  2,
+				  tallnum,
+				  &st_highscore,
+				  &st_statusbaron,
+				  10, // num digits
+				  false );
 
 }
 

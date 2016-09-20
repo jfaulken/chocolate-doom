@@ -54,6 +54,9 @@ typedef struct
 
 	// user data
 	int data;
+
+	// JGM support numbers that draw left to right for score
+	boolean		leftalign;
 	
 } st_number_t;
 
@@ -148,7 +151,8 @@ STlib_initNum
   patch_t**             pl,
   int*                  num,
   boolean*              on,
-  int                   width );
+  int                   width,
+  boolean				leftalign );
 
 void
 STlib_updateNum
@@ -165,7 +169,8 @@ STlib_initPercent
   patch_t**             pl,
   int*                  num,
   boolean*              on,
-  patch_t*              percent );
+  patch_t*              percent,
+  boolean				leftalign );
 
 
 void

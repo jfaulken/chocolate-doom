@@ -20,6 +20,7 @@ extern sc_record_t sc_records[SC_NUM_RECORDS];
 extern const unsigned * const sc_current_score;
 
 void SC_Init();
+const sc_record_t * SC_GetHighScore();
 void SC_BeginNewRecord( boolean is_nightmare );
 int SC_FinalizeRecord( char * player_name ); // return placement on leaderboard or -1
 void SC_OnNextMap( int maxkills, int maxitems, int maxsecrets );

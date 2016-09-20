@@ -64,7 +64,8 @@ STlib_initNum
   patch_t**             pl,
   int*                  num,
   boolean*              on,
-  int                   width )
+  int                   width,
+  boolean				leftalign)
 {
 	n->x        = x;
 	n->y        = y;
@@ -73,6 +74,7 @@ STlib_initNum
 	n->num      = num;
 	n->on       = on;
 	n->p        = pl;
+	n->leftalign = leftalign;
 }
 
 
@@ -111,7 +113,6 @@ STlib_drawNum
 	}
 
 	// clear the area
-	x = n->x - numdigits*w;
 
 	if (n->y - ST_Y < 0)
 		I_Error("drawNum: n->y - ST_Y < 0");
@@ -119,6 +120,9 @@ STlib_drawNum
 	// JGM don't copy background in fullscreen
 	if (!st_fullscreen)
 	{
+		x = n->leftalign
+			? n->x
+			: n->x - numdigits*w;
 		V_CopyRect(x, n->y - ST_Y, st_backing_screen, w*numdigits, h, x, n->y);
 	}
 
@@ -126,23 +130,50 @@ STlib_drawNum
 	if (num == INT_MAX)
 		return;
 
-	x = n->x;
-
 	// in the special case of 0, you draw 0
 	if (!num)
-		V_DrawPatch(x - w, n->y, n->p[ 0 ]);
-
-	// draw the new number
-	while (num && numdigits--)
 	{
-		x -= w;
-		V_DrawPatch(x, n->y, n->p[ num % 10 ]);
-		num /= 10;
+		x = n->leftalign ? n->x : (n->x - w);
+		V_DrawPatch(x, n->y, n->p[ 0 ]);
+		return;
 	}
 
-	// draw a minus sign if necessary
-	if (neg)
-		V_DrawPatch(x - 8, n->y, sttminus);
+	x = n->x;
+
+	// draw the new number
+	if ( n->leftalign )
+	{
+		if (neg)
+		{
+			// TODO x placement on this is probably wrong
+			V_DrawPatch(x, n->y, sttminus);
+			x += 8;
+		}
+
+		int place = 1000000000;
+		while(num / place == 0) 
+			place /= 10;
+		while(place > 0)
+		{
+			V_DrawPatch(x, n->y, n->p[ (num / place) % 10 ] );
+			x += w;
+			place /= 10;
+		}
+	}
+	else 
+	{
+		while (num && numdigits--)
+		{
+			x -= w;
+			V_DrawPatch(x, n->y, n->p[ num % 10 ]);
+			num /= 10;
+		}
+
+		// draw a minus sign if necessary
+		if (neg)
+			V_DrawPatch(x - 8, n->y, sttminus);
+	}
+
 }
 
 
@@ -165,9 +196,10 @@ STlib_initPercent
   patch_t**             pl,
   int*                  num,
   boolean*              on,
-  patch_t*              percent )
+  patch_t*              percent,
+  boolean				leftalign )
 {
-	STlib_initNum(&p->n, x, y, pl, num, on, 3);
+	STlib_initNum(&p->n, x, y, pl, num, on, 3, leftalign);
 	p->p = percent;
 }
 
