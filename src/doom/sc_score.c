@@ -3,6 +3,7 @@
 #include "m_misc.h"
 #include "i_system.h"
 #include <stdlib.h>
+#include <assert.h>
 
 #define SC_RECORD_FILENAME "arcade_records.txt"
 
@@ -131,37 +132,37 @@ void SC_OnNextMap( int maxkills, int maxitems, int maxsecrets )
 
 void SC_OnGetAmmo( ammotype_t ammo, int amount )
 {
-	s_state.score += amount;
+	//s_state.score += amount;
 }
 
 void SC_OnGetArmor( int amount )
 {
-	s_state.score += amount;
+	//s_state.score += amount;
 }
 
 void SC_OnGetBackpack()
 {
-	s_state.score += 500;
+	//s_state.score += 500;
 }
 
 void SC_OnGetHealth( int amount )
 {
-	s_state.score += amount;
+	//s_state.score += amount;
 }
 
 void SC_OnGetKey( int type )
 {
-	s_state.score += 1000;
+	//s_state.score += 1000;
 }
 
 void SC_OnGetPowerup( int type )
 {
-	s_state.score += 1000;
+	//s_state.score += 1000;
 }
 
 void SC_OnGetWeapon( weapontype_t weapon, boolean was_dropped )
 {
-	s_state.score += 1000;
+	//s_state.score += 1000;
 }
 
 void SC_OnMappedWall( boolean is_boundary, boolean is_secret )
@@ -171,16 +172,54 @@ void SC_OnMappedWall( boolean is_boundary, boolean is_secret )
 
 void SC_OnMobjDamaged( mobj_t * target, mobj_t * inflictor, mobj_t * source, int damage, fixed_t thrust )
 {
-	s_state.score += damage / 10;
+	//s_state.score += damage / 10;
 }
 
-void SC_OnMobjKilled( mobj_t * source, mobj_t * target )
+static int SC_PointsForKill( mobj_t * killed )
 {
-	s_state.score += 100;
+	switch( killed->type )
+	{
+	case MT_POSSESSED: return 100;
+	case MT_SHOTGUY: return 250;
+	case MT_TROOP: return 400; // imp
+	case MT_SERGEANT: return 650; // pinky
+	case MT_HEAD: return 850; // cacodemon
+	case MT_SKULL: return 225; // lost soul
+	case MT_BRUISER: return 1000; // baron
+	case MT_SPIDER: return 6500; // mastermind
+	case MT_CYBORG: return 7500; // cyberdemon
+	
+	case MT_CHAINGUY:
+	case MT_KNIGHT:
+	case MT_BABY:
+	case MT_PAIN:
+	case MT_UNDEAD:
+	case MT_FATSO:
+	case MT_VILE:
+		assert( false );
+		return 0;
+
+	default:
+		return 0;
+	}
+}
+
+void SC_OnMobjKilled( mobj_t * target, mobj_t * inflictor, mobj_t * source )
+{
+	int points = SC_PointsForKill(target);
+	if ( !points )
+	{
+		return;
+	}
+	if ( inflictor->type == MT_BARREL ) 
+	{
+		points *= 2;
+	}
+	s_state.score += points;
 }
 
 void SC_OnTouchSecretSector()
 {
-	s_state.score += 1000;
+	//s_state.score += 1000;
 }
 

@@ -688,8 +688,6 @@ P_KillMobj
 {
 	mobjtype_t  item;
 	mobj_t*     mo;
-	
-	SC_OnMobjKilled( source, target );
 
 	target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
 
@@ -914,6 +912,7 @@ P_DamageMobj
 	target->health -= damage;   
 	if (target->health <= 0)
 	{
+		SC_OnMobjKilled( target, inflictor, source );
 		P_KillMobj (source, target);
 		return;
 	}

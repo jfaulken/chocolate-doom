@@ -32,7 +32,7 @@ void SC_OnGetPowerup( int type ); // pw_invisibility etc
 void SC_OnGetWeapon( weapontype_t weapon, boolean was_dropped );
 void SC_OnMappedWall( boolean is_boundary, boolean is_secret );
 void SC_OnMobjDamaged( mobj_t * target, mobj_t * inflictor, mobj_t * source, int damage, fixed_t thrust );
-void SC_OnMobjKilled( mobj_t * source, mobj_t * target );
+void SC_OnMobjKilled( mobj_t * target, mobj_t * inflictor, mobj_t * source );
 void SC_OnTouchSecretSector();
 
 #endif
