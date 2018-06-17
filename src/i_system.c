@@ -48,7 +48,6 @@
 
 #include "w_wad.h"
 #include "z_zone.h"
-#include <assert.h>
 
 #define DEFAULT_RAM 16 /* MiB */
 #define MIN_RAM     4  /* MiB */
@@ -264,8 +263,6 @@ static boolean already_quitting = false;
 
 void I_Error (const char *error, ...)
 {
-	assert(false);
-
 	char msgbuf[512];
 	va_list argptr;
 	atexit_listentry_t *entry;
