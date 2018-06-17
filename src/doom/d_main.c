@@ -31,7 +31,6 @@
 #include "doomstat.h"
 
 #include "dstrings.h"
-#include "doomfeatures.h"
 #include "sounds.h"
 
 #include "d_iwad.h"
@@ -54,6 +53,7 @@
 #include "p_saveg.h"
 
 #include "i_endoom.h"
+#include "i_input.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -358,7 +358,7 @@ void D_Display (void)
 
 static void EnableLoadingDisk(void)
 {
-	char *disk_lump_name;
+    const char *disk_lump_name;
 
 	if (show_diskicon)
 	{
@@ -387,6 +387,7 @@ void D_BindVariables(void)
 
 	M_ApplyPlatformDefaults();
 
+    I_BindInputVariables();
 	I_BindVideoVariables();
 	I_BindJoystickVariables();
 	I_BindSoundVariables();
@@ -402,9 +403,7 @@ void D_BindVariables(void)
 	key_multi_msgplayer[2] = HUSTR_KEYBROWN;
 	key_multi_msgplayer[3] = HUSTR_KEYRED;
 
-#ifdef FEATURE_MULTIPLAYER
 	NET_BindVariables();
-#endif
 
 	M_BindIntVariable("mouse_sensitivity",      &mouseSensitivity);
 	M_BindIntVariable("sfx_volume",             &sfxVolume);
@@ -471,13 +470,13 @@ void D_DoomLoop (void)
 
 	main_loop_started = true;
 
-	TryRunTics();
-
 	I_SetWindowTitle(gamedescription);
 	I_GraphicsCheckCommandLine();
 	I_SetGrabMouseCallback(D_GrabMouseCallback);
 	I_InitGraphics();
 	EnableLoadingDisk();
+
+    TryRunTics();
 
 	V_RestoreBuffer();
 	R_ExecuteSetViewSize();
@@ -513,7 +512,7 @@ void D_DoomLoop (void)
 //
 int             demosequence;
 int             pagetic;
-char                    *pagename;
+const char                    *pagename;
 
 
 //
@@ -699,7 +698,7 @@ static char *banners[] =
 static char *GetGameName(char *gamename)
 {
 	size_t i;
-	char *deh_sub;
+    const char *deh_sub;
 	
 	for (i=0; i<arrlen(banners); ++i)
 	{
@@ -957,7 +956,7 @@ void PrintDehackedBanners(void)
 
 	for (i=0; i<arrlen(copyright_banners); ++i)
 	{
-		char *deh_s;
+        const char *deh_s;
 
 		deh_s = DEH_String(copyright_banners[i]);
 
@@ -1259,7 +1258,6 @@ void D_DoomMain (void)
 	DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
 	Z_Init ();
 		
-#ifdef FEATURE_MULTIPLAYER
 	//!
 	// @category net
 	//
@@ -1316,9 +1314,8 @@ void D_DoomMain (void)
 		exit(0);
 	}
 
-#endif
-
 	//!
+    // @category game
 	// @vanilla
 	//
 	// Disable monsters.
@@ -1327,6 +1324,7 @@ void D_DoomMain (void)
 	nomonsters = M_CheckParm ("-nomonsters");
 
 	//!
+    // @category game
 	// @vanilla
 	//
 	// Monsters respawn after being killed.
@@ -1335,6 +1333,7 @@ void D_DoomMain (void)
 	respawnparm = M_CheckParm ("-respawn");
 
 	//!
+    // @category game
 	// @vanilla
 	//
 	// Monsters move faster.
@@ -1382,6 +1381,7 @@ void D_DoomMain (void)
 #ifdef _WIN32
 
 	//!
+    // @category obscure
 	// @platform windows
 	// @vanilla
 	//
@@ -1404,6 +1404,7 @@ void D_DoomMain (void)
 	}
 
 	//!
+    // @category game
 	// @arg <x>
 	// @vanilla
 	//
@@ -1478,19 +1479,6 @@ void D_DoomMain (void)
 	D_IdentifyVersion();
 	InitGameVersion();
 
-	//!
-	// @category mod
-	//
-	// Disable automatic loading of Dehacked patches for certain
-	// IWAD files.
-	//
-	if (!M_ParmExists("-nodeh"))
-	{
-		// Some IWADs have dehacked patches that need to be loaded for
-		// them to be played properly.
-		LoadIwadDeh();
-	}
-
 	// Check which IWAD variant we are using.
 
 	if (W_CheckNumForName("FREEDOOM") >= 0)
@@ -1509,6 +1497,19 @@ void D_DoomMain (void)
 		gamevariant = bfgedition;
 	}
 
+    //!
+    // @category mod
+    //
+    // Disable automatic loading of Dehacked patches for certain
+    // IWAD files.
+    //
+    if (!M_ParmExists("-nodeh"))
+    {
+        // Some IWADs have dehacked patches that need to be loaded for
+        // them to be played properly.
+        LoadIwadDeh();
+    }
+
 	// Doom 3: BFG Edition includes modified versions of the classic
 	// IWADs which can be identified by an additional DMENUPIC lump.
 	// Furthermore, the M_GDHIGH lumps have been modified in a way that
@@ -1526,7 +1527,6 @@ void D_DoomMain (void)
 		// secret level (MAP33). In Vanilla Doom (meaning the DOS
 		// version), MAP33 overflows into the Plutonia level names
 		// array, so HUSTR_33 is actually PHUSTR_1.
-
 		DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
 		DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
 		DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
@@ -1540,12 +1540,16 @@ void D_DoomMain (void)
 		// The end result is that M_GDHIGH is too wide and causes the game
 		// to crash. As a workaround to get a minimum level of support for
 		// the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-
 		DEH_AddStringReplacement("M_GDHIGH", "M_MSGON");
 		DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
+
+        // The BFG edition's "Screen Size:" graphic has also been changed
+        // to say "Gamepad:". Fortunately, it (along with the original
+        // Doom IWADs) has an unused graphic that says "Display". So we
+        // can swap this in instead, and it kind of makes sense.
+        DEH_AddStringReplacement("M_SCRNSZ", "M_DISP");
 	}
 
-#ifdef FEATURE_DEHACKED
 	// Load Dehacked patches specified on the command line with -deh.
 	// Note that there's a very careful and deliberate ordering to how
 	// Dehacked patches are loaded. The order we use is:
@@ -1553,7 +1557,6 @@ void D_DoomMain (void)
 	//  2. Command line dehacked patches specified with -deh.
 	//  3. PWAD dehacked patches in DEHACKED lumps.
 	DEH_ParseCommandLine();
-#endif
 
 	// Load PWAD files.
 	modifiedgame = W_ParseCommandLine();
@@ -1654,17 +1657,7 @@ void D_DoomMain (void)
 	// we've finished loading Dehacked patches.
 	D_SetGameDescription();
 
-#ifdef _WIN32
-	// In -cdrom mode, we write savegames to c:\doomdata as well as configs.
-	if (M_ParmExists("-cdrom"))
-	{
-		savegamedir = configdir;
-	}
-	else
-#endif
-	{
 		savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
-	}
 
 	// Check for -file in shareware
 	if (modifiedgame && (gamevariant != freedoom))
@@ -1722,10 +1715,8 @@ void D_DoomMain (void)
 	I_InitSound(true);
 	I_InitMusic();
 
-#ifdef FEATURE_MULTIPLAYER
 	printf ("NET_Init: Init network subsystem.\n");
 	NET_Init ();
-#endif
 
 	// Initial netgame startup. Connect to server etc.
 	D_ConnectNetGame();
@@ -1737,6 +1728,7 @@ void D_DoomMain (void)
 	autostart = false;
 
 	//!
+    // @category game
 	// @arg <skill>
 	// @vanilla
 	//
@@ -1753,6 +1745,7 @@ void D_DoomMain (void)
 	}
 
 	//!
+    // @category game
 	// @arg <n>
 	// @vanilla
 	//
@@ -1800,6 +1793,7 @@ void D_DoomMain (void)
 	}
 
 	//!
+    // @category game
 	// @arg [<x> <y> | <xy>]
 	// @vanilla
 	//
@@ -1847,6 +1841,7 @@ void D_DoomMain (void)
 	// can override it or send the load slot to other players.
 
 	//!
+    // @category game
 	// @arg <s>
 	// @vanilla
 	//

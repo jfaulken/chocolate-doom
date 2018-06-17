@@ -150,7 +150,7 @@ void P_InitPicAnims (void)
 	lastanim = anims;
 	for (i=0 ; animdefs[i].istexture != -1 ; i++)
 	{
-		char *startname, *endname;
+        const char *startname, *endname;
 
 		startname = DEH_String(animdefs[i].startname);
 		endname = DEH_String(animdefs[i].endname);
@@ -357,7 +357,7 @@ P_FindNextHighestFloor
 			}
 			else if (h == MAX_ADJOINING_SECTORS + 2)
 			{
-				// Fatal overflow: game crashes at 22 textures
+                // Fatal overflow: game crashes at 22 sectors
 				I_Error("Sector with more than 22 adjoining sectors. "
 						"Vanilla will crash here");
 			}

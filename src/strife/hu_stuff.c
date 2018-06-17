@@ -24,6 +24,7 @@
 #include "z_zone.h"
 
 #include "deh_main.h"
+#include "i_input.h"
 #include "i_swap.h"
 #include "i_video.h"
 
@@ -59,29 +60,29 @@
 
 char *chat_macros[10] =
 {
-	HUSTR_CHATMACRO0,
-	HUSTR_CHATMACRO1,
-	HUSTR_CHATMACRO2,
-	HUSTR_CHATMACRO3,
-	HUSTR_CHATMACRO4,
-	HUSTR_CHATMACRO5,
-	HUSTR_CHATMACRO6,
-	HUSTR_CHATMACRO7,
-	HUSTR_CHATMACRO8,
-	HUSTR_CHATMACRO9
+    HUSTR_CHATMACRO0,
+    HUSTR_CHATMACRO1,
+    HUSTR_CHATMACRO2,
+    HUSTR_CHATMACRO3,
+    HUSTR_CHATMACRO4,
+    HUSTR_CHATMACRO5,
+    HUSTR_CHATMACRO6,
+    HUSTR_CHATMACRO7,
+    HUSTR_CHATMACRO8,
+    HUSTR_CHATMACRO9
 };
 
 // villsa [STRIFE]
 char player_names[8][16] =
 {
-	"1: ",
-	"2: ",
-	"3: ",
-	"4: ",
-	"5: ",
-	"6: ",
-	"7: ",
-	"8: "
+    "1: ",
+    "2: ",
+    "3: ",
+    "4: ",
+    "5: ",
+    "6: ",
+    "7: ",
+    "8: "
 };
 
 char                    chat_char; // remove later.
@@ -122,51 +123,51 @@ static boolean hu_setting_name = false;
 
 char *mapnames[] =
 {
-	// Strife map names
+    // Strife map names
 
-	// First "episode" - Quest to destroy the Order's Castle
-	HUSTR_1,
-	HUSTR_2,
-	HUSTR_3,
-	HUSTR_4,
-	HUSTR_5,
-	HUSTR_6,
-	HUSTR_7,
-	HUSTR_8,
-	HUSTR_9,
+    // First "episode" - Quest to destroy the Order's Castle
+    HUSTR_1,
+    HUSTR_2,
+    HUSTR_3,
+    HUSTR_4,
+    HUSTR_5,
+    HUSTR_6,
+    HUSTR_7,
+    HUSTR_8,
+    HUSTR_9,
 
-	// Second "episode" - Kill the Bishop and Make a Choice
-	HUSTR_10,
-	HUSTR_11,
-	HUSTR_12,
-	HUSTR_13,
-	HUSTR_14,
-	HUSTR_15,
-	HUSTR_16,
-	HUSTR_17,
-	HUSTR_18,
-	HUSTR_19,
+    // Second "episode" - Kill the Bishop and Make a Choice
+    HUSTR_10,
+    HUSTR_11,
+    HUSTR_12,
+    HUSTR_13,
+    HUSTR_14,
+    HUSTR_15,
+    HUSTR_16,
+    HUSTR_17,
+    HUSTR_18,
+    HUSTR_19,
 
-	// Third "episode" - Shut down Factory, kill Loremaster and Entity
-	HUSTR_20,
-	HUSTR_21,
-	HUSTR_22,
-	HUSTR_23,
-	HUSTR_24,
-	HUSTR_25,
-	HUSTR_26,
-	HUSTR_27,
-	HUSTR_28,
-	HUSTR_29,
+    // Third "episode" - Shut down Factory, kill Loremaster and Entity
+    HUSTR_20,
+    HUSTR_21,
+    HUSTR_22,
+    HUSTR_23,
+    HUSTR_24,
+    HUSTR_25,
+    HUSTR_26,
+    HUSTR_27,
+    HUSTR_28,
+    HUSTR_29,
 
-	// "Secret" levels - Abandoned Base and Training Facility
-	HUSTR_30,
-	HUSTR_31,
+    // "Secret" levels - Abandoned Base and Training Facility
+    HUSTR_30,
+    HUSTR_31,
 
-	// Demo version maps
-	HUSTR_32,
-	HUSTR_33,
-	HUSTR_34
+    // Demo version maps
+    HUSTR_32,
+    HUSTR_33,
+    HUSTR_34
 };
 
 //
@@ -177,22 +178,22 @@ char *mapnames[] =
 //
 void HU_Init(void)
 {
-	int         i;
-	int         j;
-	char        buffer[9];
+    int		i;
+    int		j;
+    char	buffer[9];
 
-	// load the heads-up font
-	j = HU_FONTSTART;
-	for (i=0;i<HU_FONTSIZE;i++)
-	{
-		DEH_snprintf(buffer, 9, "STCFN%.3d", j++);
-		hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
+    // load the heads-up font
+    j = HU_FONTSTART;
+    for (i=0;i<HU_FONTSIZE;i++)
+    {
+        DEH_snprintf(buffer, 9, "STCFN%.3d", j++);
+        hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
 
-		// haleyjd 09/18/10: load yfont as well; and yes, this is exactly
-		// how Rogue did it :P
-		buffer[2] = 'B';
-		yfont[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
-	}
+        // haleyjd 09/18/10: load yfont as well; and yes, this is exactly
+        // how Rogue did it :P
+        buffer[2] = 'B';
+        yfont[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
+    }
 }
 
 //
@@ -202,7 +203,7 @@ void HU_Init(void)
 //
 void HU_Stop(void)
 {
-	headsupactive = false;
+    headsupactive = false;
 }
 
 //
@@ -212,68 +213,68 @@ void HU_Stop(void)
 //
 void HU_Start(void)
 {
-	int         i;
-	char*       s;
+    int         i;
+    const char *s;
 
-	// haleyjd 20120211: [STRIFE] not called here.
-	//if (headsupactive)
-	//    HU_Stop();
-	
-	// haleyjd 20120211: [STRIFE] moved up
-	// create the map title widget
-	HUlib_initTextLine(&w_title,
-					   HU_TITLEX, HU_TITLEY,
-					   hu_font,
-					   HU_FONTSTART);
+    // haleyjd 20120211: [STRIFE] not called here.
+    //if (headsupactive)
+    //    HU_Stop();
+    
+    // haleyjd 20120211: [STRIFE] moved up
+    // create the map title widget
+    HUlib_initTextLine(&w_title,
+                       HU_TITLEX, HU_TITLEY,
+                       hu_font,
+                       HU_FONTSTART);
 
-	// haleyjd 08/31/10: [STRIFE] Get proper map name.
-	s = HU_TITLE;
+    // haleyjd 08/31/10: [STRIFE] Get proper map name.
+    s = HU_TITLE;
 
-	// [STRIFE] Removed Chex Quest stuff.
+    // [STRIFE] Removed Chex Quest stuff.
 
-	// dehacked substitution to get modified level name
-	s = DEH_String(s);
-	
-	while (*s)
-		HUlib_addCharToTextLine(&w_title, *(s++));
+    // dehacked substitution to get modified level name
+    s = DEH_String(s);
+    
+    while (*s)
+        HUlib_addCharToTextLine(&w_title, *(s++));
 
-	// haleyjd 20120211: [STRIFE] check for headsupactive
-	if(!headsupactive)
-	{
-		plr = &players[consoleplayer];
-		message_on = false;
-		message_dontfuckwithme = false;
-		message_nottobefuckedwith = false;
-		chat_on = false;
+    // haleyjd 20120211: [STRIFE] check for headsupactive
+    if(!headsupactive)
+    {
+        plr = &players[consoleplayer];
+        message_on = false;
+        message_dontfuckwithme = false;
+        message_nottobefuckedwith = false;
+        chat_on = false;
 
-		// create the message widget
-		HUlib_initSText(&w_message,
-						HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
-						hu_font,
-						HU_FONTSTART, &message_on);
+        // create the message widget
+        HUlib_initSText(&w_message,
+                        HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
+                        hu_font,
+                        HU_FONTSTART, &message_on);
 
-		// create the chat widget
-		HUlib_initIText(&w_chat,
-						HU_INPUTX, HU_INPUTY,
-						hu_font,
-						HU_FONTSTART, &chat_on);
+        // create the chat widget
+        HUlib_initIText(&w_chat,
+                        HU_INPUTX, HU_INPUTY,
+                        hu_font,
+                        HU_FONTSTART, &chat_on);
 
-		// create the inputbuffer widgets
-		for (i=0 ; i<MAXPLAYERS ; i++)
-			HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
+        // create the inputbuffer widgets
+        for (i=0 ; i<MAXPLAYERS ; i++)
+            HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
 
-		headsupactive = true;
+        headsupactive = true;
 
-		// haleyjd 09/18/10: [STRIFE] nickname weirdness. 
-		if(nickname != player_names[consoleplayer])
-		{
-			if(nickname != NULL && *nickname)
-			{
-				DEH_printf("have one\n");
-				nickname = player_names[consoleplayer];
-			}
-		}
-	}
+        // haleyjd 09/18/10: [STRIFE] nickname weirdness. 
+        if(nickname != player_names[consoleplayer])
+        {
+            if(nickname != NULL && *nickname)
+            {
+                DEH_printf("have one\n");
+                nickname = player_names[consoleplayer];
+            }
+        }
+    }
 }
 
 //
@@ -283,10 +284,10 @@ void HU_Start(void)
 //
 void HU_Drawer(void)
 {
-	HUlib_drawSText(&w_message);
-	HUlib_drawIText(&w_chat);
-	if (automapactive)
-		HUlib_drawTextLine(&w_title, false);
+    HUlib_drawSText(&w_message);
+    HUlib_drawIText(&w_chat);
+    if (automapactive)
+        HUlib_drawTextLine(&w_title, false);
 }
 
 //
@@ -296,9 +297,9 @@ void HU_Drawer(void)
 //
 void HU_Erase(void)
 {
-	HUlib_eraseSText(&w_message);
-	HUlib_eraseIText(&w_chat);
-	HUlib_eraseTextLine(&w_title);
+    HUlib_eraseSText(&w_message);
+    HUlib_eraseIText(&w_chat);
+    HUlib_eraseTextLine(&w_title);
 }
 
 //
@@ -312,83 +313,83 @@ void HU_Erase(void)
 //
 //  Fastcall Registers:   edx          ebx
 //      Temp Registers:   esi          edi
-void HU_addMessage(char *prefix, char *message)
+static void HU_addMessage(const char *prefix, const char *message)
 {
-	char  c;         // eax
-	int   width = 0; // edx
-	char *rover1;    // ebx (in first loop)
-	char *rover2;    // ecx (in second loop)
-	char *bufptr;    // ebx (in second loop)
-	char buffer[HU_MAXLINELENGTH+2];  // esp+52h
+    char  c;         // eax
+    int   width = 0; // edx
+    const char *rover1;    // ebx (in first loop)
+    const char *rover2;    // ecx (in second loop)
+    char *bufptr;    // ebx (in second loop)
+    char buffer[HU_MAXLINELENGTH+2];  // esp+52h
 
-	// Loop 1: Total up width of prefix.
-	rover1 = prefix;
-	if(rover1)
-	{
-		while((c = *rover1))
-		{
-			c = toupper(c) - HU_FONTSTART;
-			++rover1;
+    // Loop 1: Total up width of prefix.
+    rover1 = prefix;
+    if(rover1)
+    {
+        while((c = *rover1))
+        {
+            c = toupper(c) - HU_FONTSTART;
+            ++rover1;
 
-			if(c < 0 || c >= HU_FONTSIZE)
-				width += 4;
-			else
-				width += SHORT(hu_font[(int) c]->width);
-		}
-	}
+            if(c < 0 || c >= HU_FONTSIZE)
+                width += 4;
+            else
+                width += SHORT(hu_font[(int) c]->width);
+        }
+    }
 
-	// Loop 2: Copy as much of message into buffer as will fit on screen
-	bufptr = buffer;
-	rover2 = message;
-	while((c = *rover2))
-	{
-		if((c == ' ' || c == '-') && width > 285)
-			break;
+    // Loop 2: Copy as much of message into buffer as will fit on screen
+    bufptr = buffer;
+    rover2 = message;
+    while((c = *rover2))
+    {
+        if((c == ' ' || c == '-') && width > 285)
+            break;
 
-		*bufptr = c;
-		++bufptr;       // BUG: No check for overflow.
-		++rover2;
-		c = toupper(c);
+        *bufptr = c;
+        ++bufptr;       // BUG: No check for overflow.
+        ++rover2;
+        c = toupper(c);
 
-		if(c == ' ' || c < '!' || c >= '_')
-			width += 4;
-		else
-		{
-			c -= HU_FONTSTART;
-			width += SHORT(hu_font[(int) c]->width);
-		}
-	}
+        if(c == ' ' || c < '!' || c >= '_')
+            width += 4;
+        else
+        {
+            c -= HU_FONTSTART;
+            width += SHORT(hu_font[(int) c]->width);
+        }
+    }
 
-	// Too big to fit?
-	// BUG: doesn't consider by how much it's over.
-	if(width > 320) 
-	{
-		// backup a char... hell if I know why.
-		--bufptr;
-		--rover2;
-	}
+    // Too big to fit?
+    // BUG: doesn't consider by how much it's over.
+    if(width > 320) 
+    {
+        // backup a char... hell if I know why.
+        --bufptr;
+        --rover2;
+    }
 
-	// rover2 is not at the end?
-	if((c = *rover2))
-	{
-		// if not ON a space...
-		if(c != ' ')
-		{
-			// back up both pointers til one is found.
-			// BUG: no check against LHS of buffer. Hurr!
-			while(*bufptr != ' ')
-			{
-				--bufptr;
-				--rover2;
-			}
-		}
-	}
+    // rover2 is not at the end?
+    if((c = *rover2))
+    {
+        // if not ON a space...
+        if(c != ' ')
+        {
+            // back up both pointers til one is found.
+            // BUG: no check against LHS of buffer. Hurr!
+            while(*bufptr != ' ')
+            {
+                --bufptr;
+                --rover2;
+            }
+        }
+    }
 
-	*bufptr = '\0';
+    *bufptr = '\0';
 
-	// Add two message lines.
-	HUlib_addMessageToSText(&w_message, prefix, buffer);
-	HUlib_addMessageToSText(&w_message, NULL,   rover2);
+    // Add two message lines.
+    HUlib_addMessageToSText(&w_message, prefix, buffer);
+    HUlib_addMessageToSText(&w_message, NULL,   rover2);
 }
 
 //
@@ -399,83 +400,83 @@ void HU_addMessage(char *prefix, char *message)
 //
 void HU_Ticker(void)
 {
-	int i, rc;
-	char c;
-	//char *prefix;  STRIFE-TODO
+    int i, rc;
+    char c;
+    //char *prefix;  STRIFE-TODO
 
-	// tick down message counter if message is up
-	if (message_counter && !--message_counter)
-	{
-		message_on = false;
-		message_nottobefuckedwith = false;
-	}
+    // tick down message counter if message is up
+    if (message_counter && !--message_counter)
+    {
+        message_on = false;
+        message_nottobefuckedwith = false;
+    }
 
-	// haleyjd 20110219: [STRIFE] this condition was removed
-	//if (showMessages || message_dontfuckwithme)
-	//{
-		// display message if necessary
-		if ((plr->message && !message_nottobefuckedwith)
-			|| (plr->message && message_dontfuckwithme))
-		{
-			//HUlib_addMessageToSText(&w_message, 0, plr->message);
-			HU_addMessage(NULL, plr->message); // haleyjd [STRIFE]
-			plr->message = 0;
-			message_on = true;
-			message_counter = HU_MSGTIMEOUT;
-			message_nottobefuckedwith = message_dontfuckwithme;
-			message_dontfuckwithme = 0;
-		}
-	//} // else message_on = false;
+    // haleyjd 20110219: [STRIFE] this condition was removed
+    //if (showMessages || message_dontfuckwithme)
+    //{
+        // display message if necessary
+        if ((plr->message && !message_nottobefuckedwith)
+            || (plr->message && message_dontfuckwithme))
+        {
+            //HUlib_addMessageToSText(&w_message, 0, plr->message);
+            HU_addMessage(NULL, plr->message); // haleyjd [STRIFE]
+            plr->message = 0;
+            message_on = true;
+            message_counter = HU_MSGTIMEOUT;
+            message_nottobefuckedwith = message_dontfuckwithme;
+            message_dontfuckwithme = 0;
+        }
+    //} // else message_on = false;
 
-	// check for incoming chat characters
-	if (netgame)
-	{
-		for (i=0 ; i<MAXPLAYERS; i++)
-		{
-			if (!playeringame[i])
-				continue;
-			if (i != consoleplayer
-				&& (c = players[i].cmd.chatchar))
-			{
-				if (c <= HU_CHANGENAME) // [STRIFE]: allow HU_CHANGENAME here
-					chat_dest[i] = c;
-				else
-				{
-					rc = HUlib_keyInIText(&w_inputbuffer[i], c);
-					if (rc && c == KEY_ENTER)
-					{
-						if (w_inputbuffer[i].l.len
-							&& (chat_dest[i] == consoleplayer+1
-							 || chat_dest[i] == HU_BROADCAST))
-						{
-							HU_addMessage(player_names[i],
-										  w_inputbuffer[i].l.l);
+    // check for incoming chat characters
+    if (netgame)
+    {
+        for (i=0 ; i<MAXPLAYERS; i++)
+        {
+            if (!playeringame[i])
+                continue;
+            if (i != consoleplayer
+                && (c = players[i].cmd.chatchar))
+            {
+                if (c <= HU_CHANGENAME) // [STRIFE]: allow HU_CHANGENAME here
+                    chat_dest[i] = c;
+                else
+                {
+                    rc = HUlib_keyInIText(&w_inputbuffer[i], c);
+                    if (rc && c == KEY_ENTER)
+                    {
+                        if (w_inputbuffer[i].l.len
+                            && (chat_dest[i] == consoleplayer+1
+                             || chat_dest[i] == HU_BROADCAST))
+                        {
+                            HU_addMessage(player_names[i],
+                                          w_inputbuffer[i].l.l);
 
-							message_nottobefuckedwith = true;
-							message_on = true;
-							message_counter = HU_MSGTIMEOUT;
-							S_StartSound(0, sfx_radio);
-						}
-						else if(chat_dest[i] == HU_CHANGENAME)
-						{
-							// haleyjd 20130915 [STRIFE]: set player name
-							DEH_snprintf(player_names[i], sizeof(player_names[i]),
-										 "%.13s: ", w_inputbuffer[i].l.l);
-						}
-						HUlib_resetIText(&w_inputbuffer[i]);
-					}
-				}
-				players[i].cmd.chatchar = 0;
-			}
-		}
-	}
+                            message_nottobefuckedwith = true;
+                            message_on = true;
+                            message_counter = HU_MSGTIMEOUT;
+                            S_StartSound(0, sfx_radio);
+                        }
+                        else if(chat_dest[i] == HU_CHANGENAME)
+                        {
+                            // haleyjd 20130915 [STRIFE]: set player name
+                            DEH_snprintf(player_names[i], sizeof(player_names[i]),
+                                         "%.13s: ", w_inputbuffer[i].l.l);
+                        }
+                        HUlib_resetIText(&w_inputbuffer[i]);
+                    }
+                }
+                players[i].cmd.chatchar = 0;
+            }
+        }
+    }
 }
 
-#define QUEUESIZE               128
+#define QUEUESIZE		128
 
-static char     chatchars[QUEUESIZE];
-static int      head = 0;
-static int      tail = 0;
+static char	chatchars[QUEUESIZE];
+static int	head = 0;
+static int	tail = 0;
 
 //
 // HU_queueChatChar
@@ -485,11 +486,11 @@ static int      tail = 0;
 //
 void HU_queueChatChar(char c)
 {
-	chatchars[head] = c;
-	if (((head + 1) & (QUEUESIZE-1)) != tail)
-	{
-		head = (head + 1) & (QUEUESIZE-1);
-	}
+    chatchars[head] = c;
+    if (((head + 1) & (QUEUESIZE-1)) != tail)
+    {
+        head = (head + 1) & (QUEUESIZE-1);
+    }
 }
 
 //
@@ -499,19 +500,32 @@ void HU_queueChatChar(char c)
 //
 char HU_dequeueChatChar(void)
 {
-	char c;
+    char c;
 
-	if (head != tail)
-	{
-		c = chatchars[tail];
-		tail = (tail + 1) & (QUEUESIZE-1);
-	}
-	else
-	{
-		c = 0;
-	}
+    if (head != tail)
+    {
+        c = chatchars[tail];
+        tail = (tail + 1) & (QUEUESIZE-1);
+    }
+    else
+    {
+        c = 0;
+    }
 
-	return c;
+    return c;
+}
+
+// fraggle 01/05/15: New functions to support the Chocolate input interface.
+static void StartChatInput(void)
+{
+    chat_on = true;
+    I_StartTextInput(HU_INPUTX, HU_INPUTY, SCREENWIDTH, HU_INPUTY + 8);
+}
+
+static void StopChatInput(void)
+{
+    chat_on = false;
+    I_StopTextInput();
 }
 
 //
@@ -526,165 +540,168 @@ char HU_dequeueChatChar(void)
 //
 boolean HU_Responder(event_t *ev)
 {
-	static char         lastmessage[HU_MAXLINELENGTH+1];
-	char*               macromessage;
-	boolean             eatkey = false;
-	static boolean      altdown = false;
-	unsigned char       c;
-	int                 i;
-	int                 numplayers;
-	
-	static int          num_nobrainers = 0;
+    static char         lastmessage[HU_MAXLINELENGTH+1];
+    char*               macromessage;
+    boolean             eatkey = false;
+    static boolean      altdown = false;
+    unsigned char       c;
+    int                 i;
+    int                 numplayers;
+    
+    static int          num_nobrainers = 0;
 
-	numplayers = 0;
-	for (i=0 ; i<MAXPLAYERS ; i++)
-		numplayers += playeringame[i];
+    numplayers = 0;
+    for (i=0 ; i<MAXPLAYERS ; i++)
+        numplayers += playeringame[i];
 
-	if (ev->data1 == KEY_RSHIFT)
-	{
-		return false;
-	}
-	else if (ev->data1 == KEY_RALT || ev->data1 == KEY_LALT)
-	{
-		altdown = ev->type == ev_keydown;
-		return false;
-	}
+    if (ev->data1 == KEY_RSHIFT)
+    {
+        return false;
+    }
+    else if (ev->data1 == KEY_RALT || ev->data1 == KEY_LALT)
+    {
+        altdown = ev->type == ev_keydown;
+        return false;
+    }
 
-	if (ev->type != ev_keydown)
-		return false;
+    if (ev->type != ev_keydown)
+        return false;
 
-	if (!chat_on)
-	{
-		if (ev->data1 == key_message_refresh)
-		{
-			message_on = true;
-			message_counter = HU_MSGTIMEOUT;
-			eatkey = true;
-		}
-		else if (netgame && ev->data2 == key_multi_msg)
-		{
-			eatkey = chat_on = true;
-			HUlib_resetIText(&w_chat);
-			HU_queueChatChar(HU_BROADCAST);
-		}
-		// [STRIFE]: You cannot go straight to chatting with a particular
-		// player from here... you must press 't' first. See below.
-	}
-	else
-	{
-		c = ev->data2;
-		// send a macro
-		if (altdown)
-		{
-			c = c - '0';
-			if (c > 9)
-				return false;
-			// fprintf(stderr, "got here\n");
-			macromessage = chat_macros[c];
+    if (!chat_on)
+    {
+        if (ev->data1 == key_message_refresh)
+        {
+            message_on = true;
+            message_counter = HU_MSGTIMEOUT;
+            eatkey = true;
+        }
+        else if (netgame && ev->data2 == key_multi_msg)
+        {
+            StartChatInput();
+            eatkey = true;
+            HUlib_resetIText(&w_chat);
+            HU_queueChatChar(HU_BROADCAST);
+        }
+        // [STRIFE]: You cannot go straight to chatting with a particular
+        // player from here... you must press 't' first. See below.
+    }
+    else
+    {
+        c = ev->data3;
+        // send a macro
+        if (altdown)
+        {
+            c = c - '0';
+            if (c > 9)
+                return false;
+            // fprintf(stderr, "got here\n");
+            macromessage = chat_macros[c];
 
-			// kill last message with a '\n'
-			HU_queueChatChar(KEY_ENTER); // DEBUG!!!
+            // kill last message with a '\n'
+            HU_queueChatChar(KEY_ENTER); // DEBUG!!!
 
-			// send the macro message
-			while (*macromessage)
-				HU_queueChatChar(*macromessage++);
-			HU_queueChatChar(KEY_ENTER);
+            // send the macro message
+            while (*macromessage)
+                HU_queueChatChar(*macromessage++);
+            HU_queueChatChar(KEY_ENTER);
 
-			// leave chat mode and notify that it was sent
-			chat_on = false;
-			M_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
-			plr->message = lastmessage;
-			eatkey = true;
-		}
-		else
-		{
-			if(w_chat.l.len) // [STRIFE]: past first char of chat?
-			{
-				eatkey = HUlib_keyInIText(&w_chat, c);
-				if (eatkey)
-					HU_queueChatChar(c);
-			}
-			else
-			{
-				// [STRIFE]: check for player-specific message;
-				// slightly different than vanilla, to allow keys to be customized
-				for(i = 0; i < MAXPLAYERS; i++)
-				{
-					if(c == key_multi_msgplayer[i])
-						break;
-				}
-				if(i < MAXPLAYERS)
-				{
-					// talking to self?
-					if(i == consoleplayer)
-					{
-						num_nobrainers++;
-						if (num_nobrainers < 3)
-							plr->message = DEH_String(HUSTR_TALKTOSELF1);
-						else if (num_nobrainers < 6)
-							plr->message = DEH_String(HUSTR_TALKTOSELF2);
-						else if (num_nobrainers < 9)
-							plr->message = DEH_String(HUSTR_TALKTOSELF3);
-						else if (num_nobrainers < 32)
-							plr->message = DEH_String(HUSTR_TALKTOSELF4);
-						else
-							plr->message = DEH_String(HUSTR_TALKTOSELF5);
-					}
-					else
-					{
-						eatkey = true;
-						HU_queueChatChar(i+1);
-						DEH_snprintf(lastmessage, sizeof(lastmessage),
-							"Talking to: %c", '1' + i);
-						plr->message = lastmessage;
-					}
-				}
-				else if(c == '$') // [STRIFE]: name changing
-				{
-					eatkey = true;
-					HU_queueChatChar(HU_CHANGENAME);
-					M_StringCopy(lastmessage, DEH_String("Changing Name:"),
-								 sizeof(lastmessage));
-					plr->message = lastmessage;
-					hu_setting_name = true;
-				}
-				else
-				{
-					eatkey = HUlib_keyInIText(&w_chat, c);
-					if (eatkey)
-						HU_queueChatChar(c);
-				}
-			}
+            // leave chat mode and notify that it was sent
+            StopChatInput();
+            M_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
+            plr->message = lastmessage;
+            eatkey = true;
+        }
+        else
+        {
+            if(w_chat.l.len) // [STRIFE]: past first char of chat?
+            {
+                eatkey = HUlib_keyInIText(&w_chat, c);
+                if (eatkey)
+                    HU_queueChatChar(c);
+            }
+            else
+            {
+                // [STRIFE]: check for player-specific message;
+                // slightly different than vanilla, to allow keys to be customized
+                for(i = 0; i < MAXPLAYERS; i++)
+                {
+                    if (ev->data1 == key_multi_msgplayer[i])
+                        break;
+                }
+                if(i < MAXPLAYERS)
+                {
+                    // talking to self?
+                    if(i == consoleplayer)
+                    {
+                        num_nobrainers++;
+                        if (num_nobrainers < 3)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF1);
+                        else if (num_nobrainers < 6)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF2);
+                        else if (num_nobrainers < 9)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF3);
+                        else if (num_nobrainers < 32)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF4);
+                        else
+                            plr->message = DEH_String(HUSTR_TALKTOSELF5);
+                    }
+                    else
+                    {
+                        eatkey = true;
+                        HU_queueChatChar(i+1);
+                        DEH_snprintf(lastmessage, sizeof(lastmessage),
+                            "Talking to: %c", '1' + i);
+                        plr->message = lastmessage;
+                    }
+                }
+                else if(c == '$') // [STRIFE]: name changing
+                {
+                    eatkey = true;
+                    HU_queueChatChar(HU_CHANGENAME);
+                    M_StringCopy(lastmessage, DEH_String("Changing Name:"),
+                                 sizeof(lastmessage));
+                    plr->message = lastmessage;
+                    hu_setting_name = true;
+                }
+                else
+                {
+                    eatkey = HUlib_keyInIText(&w_chat, c);
+                    if (eatkey)
+                        HU_queueChatChar(c);
+                }
+            }
 
-			if (c == KEY_ENTER)
-			{
-				chat_on = false;
-				if (w_chat.l.len)
-				{
-					// [STRIFE]: name setting
-					if(hu_setting_name)
-					{
-						DEH_snprintf(lastmessage, sizeof(lastmessage),
-							"%s now %.13s", player_names[consoleplayer],
-							w_chat.l.l);
-						// haleyjd 20141024: missing name set for local client
-						DEH_snprintf(player_names[consoleplayer],
-							sizeof(player_names[consoleplayer]),
-							"%.13s: ", w_chat.l.l);
-						hu_setting_name = false;
-					}
-					else
-					{
-						M_StringCopy(lastmessage, w_chat.l.l,
-									 sizeof(lastmessage));
-					}
-					plr->message = lastmessage;
-				}
-			}
-			else if (c == KEY_ESCAPE)
-				chat_on = false;
-		}
-	}
+            if (c == KEY_ENTER)
+            {
+                StopChatInput();
+                if (w_chat.l.len)
+                {
+                    // [STRIFE]: name setting
+                    if(hu_setting_name)
+                    {
+                        DEH_snprintf(lastmessage, sizeof(lastmessage),
+                            "%s now %.13s", player_names[consoleplayer],
+                            w_chat.l.l);
+                        // haleyjd 20141024: missing name set for local client
+                        DEH_snprintf(player_names[consoleplayer],
+                            sizeof(player_names[consoleplayer]),
+                            "%.13s: ", w_chat.l.l);
+                        hu_setting_name = false;
+                    }
+                    else
+                    {
+                        M_StringCopy(lastmessage, w_chat.l.l,
+                                     sizeof(lastmessage));
+                    }
+                    plr->message = lastmessage;
+                }
+            }
+            else if (c == KEY_ESCAPE)
+            {
+                StopChatInput();
+            }
+        }
+    }
 
-	return eatkey;
+    return eatkey;
 }

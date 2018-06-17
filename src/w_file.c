@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//      WAD I/O functions.
+//	WAD I/O functions.
 //
 
 #include <stdio.h>
@@ -38,54 +38,56 @@ extern wad_file_class_t posix_wad_file;
 static wad_file_class_t *wad_file_classes[] = 
 {
 #ifdef _WIN32
-	&win32_wad_file,
+    &win32_wad_file,
 #endif
 #ifdef HAVE_MMAP
-	&posix_wad_file,
+    &posix_wad_file,
 #endif
-	&stdc_wad_file,
+    &stdc_wad_file,
 };
 
 wad_file_t *W_OpenFile(char *path)
 {
-	wad_file_t *result;
-	int i;
+    wad_file_t *result;
+    int i;
 
-	//!
-	// Use the OS's virtual memory subsystem to map WAD files
-	// directly into memory.
-	//
+    //!
+    // @category obscure
+    //
+    // Use the OS's virtual memory subsystem to map WAD files
+    // directly into memory.
+    //
 
-	if (!M_CheckParm("-mmap"))
-	{
-		return stdc_wad_file.OpenFile(path);
-	}
+    if (!M_CheckParm("-mmap"))
+    {
+        return stdc_wad_file.OpenFile(path);
+    }
 
-	// Try all classes in order until we find one that works
+    // Try all classes in order until we find one that works
 
-	result = NULL;
+    result = NULL;
 
-	for (i=0; i<arrlen(wad_file_classes); ++i)
-	{
-		result = wad_file_classes[i]->OpenFile(path);
+    for (i=0; i<arrlen(wad_file_classes); ++i)
+    {
+        result = wad_file_classes[i]->OpenFile(path);
 
-		if (result != NULL)
-		{
-			break;
-		}
-	}
+        if (result != NULL)
+        {
+            break;
+        }
+    }
 
-	return result;
+    return result;
 }
 
 void W_CloseFile(wad_file_t *wad)
 {
-	wad->file_class->CloseFile(wad);
+    wad->file_class->CloseFile(wad);
 }
 
 size_t W_Read(wad_file_t *wad, unsigned int offset,
-			  void *buffer, size_t buffer_len)
+              void *buffer, size_t buffer_len)
 {
-	return wad->file_class->Read(wad, offset, buffer, buffer_len);
+    return wad->file_class->Read(wad, offset, buffer, buffer_len);
 }
 

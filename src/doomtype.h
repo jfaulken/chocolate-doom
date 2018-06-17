@@ -13,13 +13,15 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//      Simple basic typedefs, isolated here to make it easier
-//       separating modules.
+//	Simple basic typedefs, isolated here to make it easier
+//	 separating modules.
 //    
 
 
 #ifndef __DOOMTYPE__
 #define __DOOMTYPE__
+
+#include "config.h"
 
 #if defined(_MSC_VER) && !defined(__cplusplus)
 #define inline __inline
@@ -29,10 +31,15 @@
 // Outside Windows, we use strings.h for str[n]casecmp.
 
 
-#ifdef _WIN32
+#if !HAVE_DECL_STRCASECMP || !HAVE_DECL_STRNCASECMP
 
+#include <string.h>
+#if !HAVE_DECL_STRCASECMP
 #define strcasecmp stricmp
+#endif
+#if !HAVE_DECL_STRNCASECMP
 #define strncasecmp strnicmp
+#endif
 
 #else
 
@@ -58,11 +65,24 @@
 #define PACKEDATTR __attribute__((packed))
 #endif
 
+#define PRINTF_ATTR(fmt, first) __attribute__((format(printf, fmt, first)))
+#define PRINTF_ARG_ATTR(x) __attribute__((format_arg(x)))
+
 #else
 #define PACKEDATTR
+#define PRINTF_ATTR(fmt, first)
+#define PRINTF_ARG_ATTR(x)
 #endif
 
-// C99 integer types; with gcc we just use this.  Other compilers 
+#ifdef __WATCOMC__
+#define PACKEDPREFIX _Packed
+#else
+#define PACKEDPREFIX
+#endif
+
+#define PACKED_STRUCT(...) PACKEDPREFIX struct __VA_ARGS__ PACKEDATTR
+
+// C99 integer types; with gcc we just use this.  Other compilers
 // should add conditional statements that define the C99 types.
 
 // What is really wanted here is stdint.h; however, some old versions
@@ -82,13 +102,15 @@ typedef bool boolean;
 
 typedef enum 
 {
-	false, 
-	true
+    false, 
+    true
 } boolean;
 
 #endif
 
 typedef uint8_t byte;
+typedef uint8_t pixel_t;
+typedef int16_t dpixel_t;
 
 #include <limits.h>
 

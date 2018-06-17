@@ -16,7 +16,7 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
 all: $(ZIPS)
 
 $(ZIPS):
-	unix2dos $</*.txt
+	unix2dos --add-bom $</*.txt
 	zip -j -r $@ $</*
 
 $(DOOM_ZIP): staging-doom hook-doom
@@ -38,24 +38,23 @@ hook-strife: staging-strife
 
 staging-%:
 	mkdir $@
-	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe    \
-	   $(DLL_FILES)                               \
-	   $@/
-	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
-	   $@/$(PROGRAM_PREFIX)$*-setup.exe
-	$(STRIP) $@/*.exe
-	
+	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe $@
+	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
+	               $@/$(PROGRAM_PREFIX)$*-setup.exe
+	LC_ALL=C ./cp-with-libs --ldflags="$(LDFLAGS)" \
+	               $(TOPLEVEL)/midiproc/$(PROGRAM_PREFIX)midiproc.exe \
+	               $@/$(PROGRAM_PREFIX)midiproc.exe
+
+	$(STRIP) $@/*.exe $@/*.dll
+
 	for f in $(DOC_FILES); do                                \
 		cp $(TOPLEVEL)/$$f $@/$$(basename $$f .md).txt;  \
 	done
 	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
-	
-	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
-	             -D$(shell echo $* | tr a-z A-Z)      \
-	         < $(TOPLEVEL)/man/INSTALL.template       \
-	         > $@/INSTALL.txt
+	cp $(TOPLEVEL)/man/INSTALL.$* $@/INSTALL.txt
 
 clean:
 	rm -f $(ZIPS)
 	rm -rf staging-*
-

@@ -1,18 +1,10 @@
 #ifdef DOOM
-#define LONG_GAME_NAME Chocolate Doom
-#define LONG_EXE_NAME  chocolate-doom
 #define DEFAULT_IWAD   doom2.wad
 #elif HERETIC
-#define LONG_GAME_NAME Chocolate Heretic
-#define LONG_EXE_NAME  chocolate-heretic
 #define DEFAULT_IWAD   heretic.wad
 #elif HEXEN
-#define LONG_GAME_NAME Chocolate Hexen
-#define LONG_EXE_NAME  chocolate-hexen
 #define DEFAULT_IWAD   hexen.wad
 #elif STRIFE
-#define LONG_GAME_NAME Chocolate Strife
-#define LONG_EXE_NAME  chocolate-strife
 #define DEFAULT_IWAD   strife1.wad
 #endif
 
@@ -30,9 +22,9 @@ to be installed:
 
  * A C compiler (gcc is recommended)
  * make (GNU make is recommended)
- * LibSDL (see http://www.libsdl.org/)
- * SDL_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
- * SDL_net (see http://www.libsdl.org/projects/SDL_net/)
+ * SDL2 (see https://www.libsdl.org/)
+ * SDL2_mixer (see https://www.libsdl.org/projects/SDL_mixer/)
+ * SDL2_net (see https://www.libsdl.org/projects/SDL_net/)
  * Python (optional)
 
 Follow the standard instructions for installing an autotools-based
@@ -117,9 +109,9 @@ From the command line it is possible to combine these files into a
 single large file, using a command similar to the following:
 
 #if _WIN32
-   copy doom_se.1+doom_se.2+doom_se.3+doom_se.4+doom_se.5 doom_se.lha
+   copy doom_se.1+doom_se.2+doom_se.3+doom_se.4+doom_se.5 doom_se.lzh
 #else
-   cat doom_se.1 doom_se.2 doom_se.3 doom_se.4 doom_se.5 > doom_se.lha
+   cat doom_se.1 doom_se.2 doom_se.3 doom_se.4 doom_se.5 > doom_se.lzh
 #endif
 
 The resulting file is an LHA archive file, and it can be extracted
@@ -186,6 +178,20 @@ do one of the following:
 #endif
 
 #if DOOM
+== Playing with Freedoom ==
+
+Freedoom is an open content project to create a Doom engine-based game
+that is entirely free software. The website can be found here:
+
+  https://freedoom.github.io/
+
+The main Freedoom IWAD files are not currently compatible with
+LONG_GAME_NAME. However, you can play using FreeDM, the
+deathmatch spinoff project. If you want to play single player games,
+you'll need to download additional fan-made WAD files to use in
+conjunction with it. Check out the Chocolate Doom wiki's page on
+Freedoom for some suggestions.
+
 == Playing with Chex Quest ==
 
 Chex Quest is a game based on Doom with some minor modifications that
@@ -235,18 +241,18 @@ Upgrade patches are available that will update your game to the latest
 version, the following sites have the patches:
 
 #if DOOM
-  http://www.doom2.net/doom2/utils.html
-  ftp://ftp.idsoftware.com/idstuff/doom
-  ftp://ftp.idsoftware.com/idstuff/doom2
+  <http://www.doom2.net/doom2/utils.html>
+  <http://www.gamers.org/pub/idgames/idstuff/doom>
+  <http://www.gamers.org/pub/idgames/idstuff/doom2>
 #elif HERETIC
-  ftp://ftp.idsoftware.com/idstuff/heretic
+  <http://www.gamers.org/pub/idgames/idstuff/heretic>
 #elif HEXEN
-  ftp://ftp.idsoftware.com/idstuff/hexen
+  <http://www.gamers.org/pub/idgames/idstuff/hexen>
 #elif STRIFE
-  ftp://ftp.fu-berlin.de/pc/games/idgames/roguestuff
+  <http://www.gamers.org/pub/idgames/roguestuff>
 #endif
 
-Please see http://doomwiki.org/wiki/Game_patch for more information.
+Please see <http://doomwiki.org/wiki/Game_patch> for more information.
 
 #if _WIN32
 As the patches are binary patches that run as DOS executables, on
@@ -269,7 +275,7 @@ how to set these up.
 
 #if !PRECOMPILED
 When compiling from source, be sure to compile and install Timidity
-before installing SDL_mixer.
+before installing SDL2_mixer.
 
 #endif
 # vim: tw=70

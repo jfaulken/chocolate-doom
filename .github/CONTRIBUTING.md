@@ -31,8 +31,11 @@ Please try to give as much information as possible:
   you're using.
 
 * Please say which game you're playing (Doom 1, Doom 2, Heretic,
-  Hexen, Strife, etc.) and list any add-on WADs you're using. Please
-  mention if you have any special configuration you think may be
+  Hexen, Strife, etc.) and if you're using any fan-made WADs or mods,
+  please say which mods (and where they can be downloaded!). It helps
+  to give the full command line you're using to start the game.
+
+* Please mention if you have any special configuration you think may be
   relevant, too.
 
 ### Feature requests
@@ -69,6 +72,11 @@ following guidelines before opening a pull request:
 
 * Please follow the coding style guidelines described in the
   [HACKING](../HACKING.md) file.
+
+* Please don't make unnecessary changes which just change formatting
+  without any actual change to program logic. While being consistent
+  is nice, such changes destroy the ability to use the `git blame`
+  command to see when code was last changed.
 
 * The guidelines given above in the "feature requests" section also
   apply here. New features which aren't in line with the project

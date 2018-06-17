@@ -1,65 +1,209 @@
 ## HEAD
 
 ### General
-  * Bash completion scripts are included. (thanks Fabian)
-  * Support the *.lmp file format in the OS X launcher (thanks Jon)
-  * Added emulation for pitch-shifting as in early versions of Doom,
-    Heretic, and Hexen. (thanks Jon)
-  * Write out aspect-correct 1600×1200 PNGs. (thanks Jon)
-  * OPL emulation is more accurate. (thanks Nuke.YKT)
-  * Futher emulation of DMX bugs with GUS cards. (thanks Nuke.YKT)
-  * Emulation of the disk icon has returned. (thanks Fabian, Jon)
-  * Checksum calculations were fixed on big endian systems, allowing
-    multiplayer games to be played in mixed little/big-endian
-    environments. (thanks GhostlyDeath, njankowski)
+  * The 0 and 5 keys on the number pad can now be bound independently
+    of any other keyboard key.  (thanks BlooD2ool)
+  * Man page generation has been reworked to use autoconf macro
+    substitution, making it eaiser for downstream forks to change the
+    project name.  (thanks Jon)
+  * Several functions have been hardened against incomplete reads and
+    error conditions, and made safer.  (thanks turol)
+  * We now print a meaningful error message when a savegame cannot be
+    loaded.  (thanks Zodomaniac, chungy)
+  * Fixed an exception thrown by the Windows kernel when debugging with
+    GDB.  (thanks AXDOOMER)
+  * With aspect ratio correction disabled, the game can scale to any
+    arbitrary size and remove all black borders in full screen mode.
+    (thanks chungy)
 
 ### Build systems
-  * Improved compatibility with BSD Make. (thanks R.Rebello)
-  * “./configure --with-PACKAGE” checks were repaired to behave
-    logically, rather than disabling the feature. (thanks R.Rebello)
-  * Default to installing the games to ${bindir}, such as
-    /usr/local/bin, rather than /usr/local/games. (thanks chungy)
-  * Support Visual Studio 2015. (thanks Azarien)
-  * Allow SDL headers and libraries to exist in the Microsoft Visual
-    Studio project directory. (thanks Quasar)
-  * Repaired the CodeBlocks projects by removing non-existent files
+  * CMake has been added along with the deprecation of Microsoft
+    Visual Studio and Code::Blocks files.  CMake maintains support for
+    multiple IDEs and versions thereof, and reduces developer overhead
+    when updating Chocolate Doom. (thanks AlexMax)
+
+### Doom
+  * Map33 intermission screen and map33-map35 automap names are
+    emulated. (thanks CapnClever)
+
+### Hexen
+  * ACS code has been hardened against potential security
+    vulnerabilities.
+
+## 3.0.0 (2017-12-30)
+
+  Chocolate Doom 3.0 is a new major revision. The main change is that
+  the codebase has been ported to SDL 2.0. This brings a number of
+  benefits, although there have also been some other minor changes (all
+  listed below).
+
+  Huge thanks go to the entire Chocolate Doom team for working on the
+  port to SDL2, and to all the testers who have found and reported bugs
+  during its development.
+
+### General
+  * All screen scaling is now performed in hardware, meaning that the
+    game can run in arbitrary window sizes in high quality. It can also
+    scale to very large resolutions sizes without using large amounts of
+    CPU or suffering degraded performance (thanks Fabian).
+  * It is now possible to switch between windowed and full screen modes
+    while the game is running by pressing alt + enter (thanks Jon)
+  * Windows binaries now ship with several previously-optional DLLs.
+    This means it is now possible to take PNG screenshots and to use
+    digital music packs (FLAC/Ogg Vorbis formats).
+  * The game now remembers your preferred monitor and will start on the
+    same monitor you were using the last time you played. Windows appear
+    centered on the screen.
+  * The OS X launcher was tweaked somewhat, and now uses proper path
+    controls for choosing files. FreeDM was added as an IWAD.
+  * Configuration files on Mac OS X and Unix are now stored in locations
+    compliant with the XDG standard (thanks chungy):
+    - On Unix: `~/.local/share/chocolate-doom/`
+    - On OS X: `~/Library/Application Support/chocolate-doom/`
+  * Icons when the game is running are now a higher resolution.
+  * Keyboard input is improved and uses the new SDL input API; on
+    systems with on-screen keyboards, this should activate the on-screen
+    keyboard when it is appropriate.
+  * Menu navigation with the joystick is now much more practical, and
+    it’s possible to bind a joystick axis to look up/down in games which
+    support it (thanks Jon, Wintermute0110).
+  * Several command line options were removed that were judged to be
+    useless: `-grabmouse`, `-novert` and `-nonovert`. The mouse grabbing
+    and novert settings can still be configured in the setup tool.
+  * There is no longer any option in the setup tool to specify a screen
+    resolution, since in full screen mode the game just runs at the
+    desktop resolution without changing screen modes. If necessary, the
+    config file options `fullscreen_width` and `fullscreen_height` can
+    be used to explicitly set a screen resolution.
+  * There is no longer a soft dependency on Zenity on Unix systems; the
+    SDL API is now used to display error dialogs.
+  * Joysticks are identified more precisely using GUID now.
+  * A new parameter, `-savedir` allows users to specify a directory from
+    which to load and save games. (thanks CapnClever)
+  * The midiproc code from Eternity Engine has been imported, improving
+    native MIDI playback on Windows and fixing a long-standing bug with
+    music volume adjustment (thanks AlexMax, Quasar).
+  * VGA “porch” emulation was added (thanks Jon).
+  * The codebase now compiles with OpenWatcom (thanks Stephen Finniss).
+
+### Doom
+  * The GOG install of Doom 3: BFG Edition is now detected (thanks chungy)
+  * A `-shorttics` command line parameter was added that simulates
+    recording a vanilla demo without actually recording a demo.
+
+### Hexen
+  * The CD audio option for music playback has been removed; the CD
+    playback API has been removed from SDL 2.0. However, it is possible
+    to use digital music packs as an alternative.
+
+### Strife
+  * `voices.wad` is now correctly loaded before PWADs (thanks
+    @Catoptromancy)
+
+### libtextscreen
+  * On OS X on machines with retina displays, text screens are rendered
+    using a high detail font.
+  * File selector widgets now look more visually distinctive.
+  * There is now a convenience widget for conditionally hiding widgets.
+  * Font handling was restructured to be based around PNG format fonts
+    which are converted during the build and can be more easily edited.
+  * Handling of code pages was cleaned up, so it is easier to change the
+    code to work with a different code page now.
+  * Lots of the UI code was changed to use UTF-8 strings.
+  * File extensions when using the Zenity file selector are now case
+    insensitive (thanks Jon).
+
+## 2.3.0 (2016-12-29)
+
+### General
+  * Bash completion scripts are included (thanks Fabian)
+  * The OS X launcher now supports the .lmp file format (thanks Jon)
+  * Pitch-shifting from early versions of Doom, Heretic, and Hexen.
+    is now supported (thanks Jon)
+  * Aspect ratio-corrected 1600×1200 PNGs are now written (thanks Jon)
+  * OPL emulation is more accurate (thanks Nuke.YKT)
+  * DMX bugs with GUS cards are now better emulated (thanks Nuke.YKT)
+  * The disk activity floppy disk icon is now shown (thanks Fabian, Jon)
+  * Checksum calculations are fixed on big endian systems, allowing
+    multiplayer games to be played in mixed little/big-endian
+    environments (thanks GhostlyDeath, njankowski)
+  * The NES30, SNES30, and SFC30 gamepads are detected and configured
+    automatically by the Setup tool. The automap can also be configured
+    to a joystick button (thanks Jon)
+  * The vanilla limit of 4046 lumps per WAD is now enforced (thanks
+    Jon, Quasar, Edward-san)
+  * Solidsegs overflow is emulated like in vanilla (thanks Quasar)
+  * Multiple capitalizations are now tried when searching for WAD files,
+    for convenience when running on case sensitive filesystems (thanks
+    Fabian).
+  * A new command line argument, `-strictdemos`, was added, to allow
+    more careful control over demo format extensions. Such extensions
+    are now forbidden in WAD files and warning messages are shown.
+
+### Build systems
+  * There is better compatibility with BSD Make (thanks R.Rebello)
+  * `./configure --with-PACKAGE` checks were repaired to behave
+    logically, rather than disabling the feature (thanks R.Rebello)
+  * Games are now installed to ${bindir} by default, eg.
+    /usr/local/bin, rather than /usr/local/games (thanks chungy)
+  * Visual Studio 2015 is now supported (thanks Azarien)
+  * SDL headers and libraries can now exist in the Microsoft Visual
+    Studio project directory (thanks Quasar)
+  * CodeBlocks projects were repaired by removing non-existent files
     from the project files (thanks krystalgamer)
 
 ### Doom
-  * Chex Quest’s level warp cheat (LEESNYDER##) was changed to behave
-    like the original EXE. (thanks Nuke.YKT)
-  * Allow starting multiplayer Chex Quest games.
-  * Allow Freedoom: Phase 1 ≤ 0.10.1 to be loaded with mods, with
-    -gameversion older than ultimate. (thanks Fabian, chungy)
-  * Added safety checks against write failures when saving a game,
-    such as when the directory is read-only.  Try falling back to a
-    temporary directory and reporting an error instead.  (thanks
+  * Chex Quest’s level warp cheat (LEESNYDER##) now behaves more like
+    like the original EXE (thanks Nuke.YKT)
+  * It’s now possible to start multiplayer Chex Quest games.
+  * Freedoom: Phase 1 <= 0.10.1 can now be loaded with mods, with
+    -gameversion older than ultimate (thanks Fabian, chungy)
+  * The IWAD order preference for GOG.com installs matches vanilla
+    Final Doom: doom2, plutonia, tnt, doom (thanks chungy)
+  * There are better safety checks against write failures when saving
+    a game, such as when the directory is read-only (thanks
     terrorcide)
-  * Versions 1.666, 1.7, and 1.8 are emulated. (thanks Nuke.YKT)
+  * Versions 1.666, 1.7, and 1.8 are emulated (thanks Nuke.YKT)
+  * Crashes are now handled more gracefully when a linedef references
+    nonexistent sidedefs (thanks Fabian)
 
 ### Heretic
-  * Added map names for Episode 6, fixing a crash after completing a
-    level in this episode. (thanks J.Benaim)
+  * Map names were added for Episode 6, fixing a crash after completing
+    a level in this episode (thanks J.Benaim)
+  * Support for unlimited demo/savegames was added (thanks CapnClever)
+  * Demo support is expanded: `-demoextend` allows demos to last longer
+    than a single level; `-shortticfix` adjusts low-resolution turning
+    to match Doom’s handling, and there is now `-maxdemo` and `-longtics`
+    support (thanks CapnClever)
 
 ### Hexen
-  * The MRJONES cheat code returns an identical string as vanilla, and
-    enables fully reproducable builds. (thanks Fabian)
-  * Fixed an issue where the game crashed while killing the
-    Wraithverge in 64-bit builds. (thanks J.Benaim)
+  * The MRJONES cheat code returns an identical string to vanilla, and
+    enables fully reproducible builds (thanks Fabian)
+  * An issue was fixed where the game crashed while killing the
+    Wraithverge in 64-bit builds (thanks J.Benaim)
+  * Support for unlimited demo/savegames was added (thanks CapnClever)
+  * Mouse buttons for strafe left/right and move backward were added,
+    as well as a “Double click acts as use” mouse option (thanks
+    CapnClever)
+  * Demo support is expanded: `-demoextend` allows demos to last longer
+    than a single level; `-shortticfix` adjusts low-resolution turning
+    to match Doom’s handling, and there is now `-maxdemo` and `-longtics`
+    support (thanks CapnClever)
 
 ### Strife
-  * Support added for automatic loading of the IWAD from the GOG.com
-    release of Strife: Veteran Edition on Windows. (thanks chungy)
-  * Jumping can be bound to a mouse button. (thanks Gez)
-  * Gibbing logic was changed to match vanilla behavior. (thanks Quasar)
-  * Several constants differences from vanilla were fixed. (thanks
+  * Support was added for automatic loading of the IWAD from the GOG.com
+    release of Strife: Veteran Edition on Windows (thanks chungy)
+  * Jumping can now be bound to a mouse button (thanks Gez)
+  * Gibbing logic was changed to match vanilla behavior (thanks Quasar)
+  * Several constants differences from vanilla were fixed (thanks
     Nuke.YKT, Quasar)
   * When using -iwad, voices.wad from the IWAD’s directory is prefered
-    over auto-detected DOS/Steam/GOG.com installs. (thanks Quasar)
+    over auto-detected DOS/Steam/GOG.com installs (thanks Quasar)
 
 ### libtextscreen
-  * Simplified the API for creating and managing tables and columns.
-  * Allow cycling through tables with tab key.
+  * The API for creating and managing tables and columns was simplified.
+  * It’s now possible to cycle through tables with the tab key.
+  * Windows can now have multiple columns.
 
 ## 2.2.1 (2015-09-10)
 

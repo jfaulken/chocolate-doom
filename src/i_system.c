@@ -50,10 +50,6 @@
 #include "z_zone.h"
 #include <assert.h>
 
-#ifdef __MACOSX__
-#include <CoreFoundation/CFUserNotification.h>
-#endif
-
 #define DEFAULT_RAM 16 /* MiB */
 #define MIN_RAM     4  /* MiB */
 
@@ -136,6 +132,7 @@ byte *I_ZoneBase (int *size)
 	int p;
 
 	//!
+    // @category obscure
 	// @arg <mb>
 	//
 	// Specify the heap size, in MiB (default 16).
@@ -162,7 +159,7 @@ byte *I_ZoneBase (int *size)
 	return zonemem;
 }
 
-void I_PrintBanner(char *msg)
+void I_PrintBanner(const char *msg)
 {
 	int i;
 	int spaces = 35 - (strlen(msg) / 2);
@@ -185,7 +182,7 @@ void I_PrintDivider(void)
 	putchar('\n');
 }
 
-void I_PrintStartupBanner(char *gamedescription)
+void I_PrintStartupBanner(const char *gamedescription)
 {
 	I_PrintDivider();
 	I_PrintBanner(gamedescription);
@@ -210,7 +207,7 @@ boolean I_ConsoleStdout(void)
 {
 #ifdef _WIN32
 	// SDL "helpfully" always redirects stdout to a file.
-	return 0;
+    return false;
 #else
 	return isatty(fileno(stdout));
 #endif
@@ -257,90 +254,6 @@ void I_Quit (void)
 	exit(0);
 }
 
-#if !defined(_WIN32) && !defined(__MACOSX__)
-#define ZENITY_BINARY "/usr/bin/zenity"
-
-// returns non-zero if zenity is available
-
-static int ZenityAvailable(void)
-{
-	return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
-}
-
-// Escape special characters in the given string so that they can be
-// safely enclosed in shell quotes.
-
-static char *EscapeShellString(char *string)
-{
-	char *result;
-	char *r, *s;
-
-	// In the worst case, every character might be escaped.
-	result = malloc(strlen(string) * 2 + 3);
-	r = result;
-
-	// Enclosing quotes.
-	*r = '"';
-	++r;
-
-	for (s = string; *s != '\0'; ++s)
-	{
-		// From the bash manual:
-		//
-		//  "Enclosing characters in double quotes preserves the literal
-		//   value of all characters within the quotes, with the exception
-		//   of $, `, \, and, when history expansion is enabled, !."
-		//
-		// Therefore, escape these characters by prefixing with a backslash.
-
-		if (strchr("$`\\!", *s) != NULL)
-		{
-			*r = '\\';
-			++r;
-		}
-
-		*r = *s;
-		++r;
-	}
-
-	// Enclosing quotes.
-	*r = '"';
-	++r;
-	*r = '\0';
-
-	return result;
-}
-
-// Open a native error box with a message using zenity
-
-static int ZenityErrorBox(char *message)
-{
-	int result;
-	char *escaped_message;
-	char *errorboxpath;
-	static size_t errorboxpath_size;
-
-	if (!ZenityAvailable())
-	{
-		return 0;
-	}
-
-	escaped_message = EscapeShellString(message);
-
-	errorboxpath_size = strlen(ZENITY_BINARY) + strlen(escaped_message) + 19;
-	errorboxpath = malloc(errorboxpath_size);
-	M_snprintf(errorboxpath, errorboxpath_size, "%s --error --text=%s",
-			   ZENITY_BINARY, escaped_message);
-
-	result = system(errorboxpath);
-
-	free(errorboxpath);
-	free(escaped_message);
-
-	return result;
-}
-
-#endif /* !defined(_WIN32) && !defined(__MACOSX__) */
 
 
 //
@@ -349,7 +262,7 @@ static int ZenityErrorBox(char *message)
 
 static boolean already_quitting = false;
 
-void I_Error (char *error, ...)
+void I_Error (const char *error, ...)
 {
 	assert(false);
 
@@ -396,62 +309,46 @@ void I_Error (char *error, ...)
 		entry = entry->next;
 	}
 
+    //!
+    // @category obscure
+    //
+    // If specified, don't show a GUI window for error messages when the
+    // game exits with an error.
+    //
 	exit_gui_popup = !M_ParmExists("-nogui");
 
 	// Pop up a GUI dialog box to show the error message, if the
 	// game was not run from the console (and the user will
 	// therefore be unable to otherwise see the message).
 	if (exit_gui_popup && !I_ConsoleStdout())
-#ifdef _WIN32
 	{
-		wchar_t wmsgbuf[512];
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                 PACKAGE_STRING, msgbuf, NULL);
+    }
 
-		MultiByteToWideChar(CP_ACP, 0,
-							msgbuf, strlen(msgbuf) + 1,
-							wmsgbuf, sizeof(wmsgbuf));
+    // abort();
 
-		MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
+    SDL_Quit();
+
+    exit(-1);
 	}
-#elif defined(__MACOSX__)
-	{
-		CFStringRef message;
-		int i;
 
-		// The CoreFoundation message box wraps text lines, so replace
-		// newline characters with spaces so that multiline messages
-		// are continuous.
+//
+// I_Realloc
+//
 
-		for (i = 0; msgbuf[i] != '\0'; ++i)
+void *I_Realloc(void *ptr, size_t size)
 		{
-			if (msgbuf[i] == '\n')
-			{
-				msgbuf[i] = ' ';
-			}
-		}
+    void *new_ptr;
 
-		message = CFStringCreateWithCString(NULL, msgbuf,
-											kCFStringEncodingUTF8);
+    new_ptr = realloc(ptr, size);
 
-		CFUserNotificationDisplayNotice(0,
-										kCFUserNotificationCautionAlertLevel,
-										NULL,
-										NULL,
-										NULL,
-										CFSTR(PACKAGE_STRING),
-										message,
-										NULL);
-	}
-#else
+    if (size != 0 && new_ptr == NULL)
 	{
-		ZenityErrorBox(msgbuf);
+        I_Error ("I_Realloc: failed on reallocation of %" PRIuPTR " bytes", size);
 	}
-#endif
 
-	// abort();
-
-	SDL_Quit();
-
-	exit(-1);
+    return new_ptr;
 }
 
 //

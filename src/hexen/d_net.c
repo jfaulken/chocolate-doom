@@ -13,13 +13,11 @@
 // GNU General Public License for more details.
 //
 // DESCRIPTION:
-//      DOOM Network game communication and protocol,
-//      all OS independend parts.
+//	DOOM Network game communication and protocol,
+//	all OS independend parts.
 //
 
 #include <stdlib.h>
-
-#include "doomfeatures.h"
 
 #include "m_argv.h"
 #include "i_system.h"
@@ -49,57 +47,57 @@ extern boolean demorecording;
 
 static void PlayerQuitGame(player_t *player)
 {
-	static char exitmsg[80];
-	unsigned int player_num;
+    static char exitmsg[80];
+    unsigned int player_num;
 
-	player_num = player - players;
+    player_num = player - players;
 
-	M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
-	exitmsg[7] += player_num;
-	P_SetMessage(&players[consoleplayer], exitmsg, true);
-	S_StartSound(NULL, SFX_CHAT);
+    M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
+    exitmsg[7] += player_num;
+    P_SetMessage(&players[consoleplayer], exitmsg, true);
+    S_StartSound(NULL, SFX_CHAT);
 
-	playeringame[player_num] = false;
+    playeringame[player_num] = false;
 
-	// TODO: check if it is sensible to do this:
+    // TODO: check if it is sensible to do this:
 
-	if (demorecording) 
-	{
-		G_CheckDemoStatus ();
-	}
+    if (demorecording) 
+    {
+        G_CheckDemoStatus ();
+    }
 }
 
 static void RunTic(ticcmd_t *cmds, boolean *ingame)
 {
-	extern boolean advancedemo;
-	unsigned int i;
+    extern boolean advancedemo;
+    unsigned int i;
 
-	// Check for player quits.
+    // Check for player quits.
 
-	for (i = 0; i < maxplayers; ++i)
-	{
-		if (!demoplayback && playeringame[i] && !ingame[i])
-		{
-			PlayerQuitGame(&players[i]);
-		}
-	}
+    for (i = 0; i < maxplayers; ++i)
+    {
+        if (!demoplayback && playeringame[i] && !ingame[i])
+        {
+            PlayerQuitGame(&players[i]);
+        }
+    }
 
-	netcmds = cmds;
+    netcmds = cmds;
 
-	// check that there are players in the game.  if not, we cannot
-	// run a tic.
+    // check that there are players in the game.  if not, we cannot
+    // run a tic.
 
-	if (advancedemo)
-		H2_DoAdvanceDemo ();
+    if (advancedemo)
+        H2_DoAdvanceDemo ();
 
-	G_Ticker ();
+    G_Ticker ();
 }
 
 static loop_interface_t hexen_loop_interface = {
-	H2_ProcessEvents,
-	G_BuildTiccmd,
-	RunTic,
-	MN_Ticker
+    H2_ProcessEvents,
+    G_BuildTiccmd,
+    RunTic,
+    MN_Ticker
 };
 
 
@@ -108,28 +106,35 @@ static loop_interface_t hexen_loop_interface = {
 
 static void LoadGameSettings(net_gamesettings_t *settings)
 {
-	unsigned int i;
+    unsigned int i;
 
-	deathmatch = settings->deathmatch;
-	ticdup = settings->ticdup;
-	startepisode = settings->episode;
-	startmap = settings->map;
-	startskill = settings->skill;
-	// TODO startloadgame = settings->loadgame;
-	nomonsters = settings->nomonsters;
-	respawnparm = settings->respawn_monsters;
-	consoleplayer = settings->consoleplayer;
+    deathmatch = settings->deathmatch;
+    ticdup = settings->ticdup;
+    startepisode = settings->episode;
+    startmap = settings->map;
+    startskill = settings->skill;
+    // TODO startloadgame = settings->loadgame;
+    lowres_turn = settings->lowres_turn;
+    nomonsters = settings->nomonsters;
+    respawnparm = settings->respawn_monsters;
+    consoleplayer = settings->consoleplayer;
 
-	for (i=0; i<maxplayers; ++i)
-	{
-		playeringame[i] = i < settings->num_players;
-		PlayerClass[i] = settings->player_classes[i];
+    if (lowres_turn)
+    {
+        printf("NOTE: Turning resolution is reduced; this is probably "
+               "because there is a client recording a Vanilla demo.\n");
+    }
 
-		if (PlayerClass[i] >= NUMCLASSES)
-		{
-			PlayerClass[i] = PCLASS_FIGHTER;
-		}
-	}
+    for (i=0; i<maxplayers; ++i)
+    {
+        playeringame[i] = i < settings->num_players;
+        PlayerClass[i] = settings->player_classes[i];
+
+        if (PlayerClass[i] >= NUMCLASSES)
+        {
+            PlayerClass[i] = PCLASS_FIGHTER;
+        }
+    }
 }
 
 // Save the game settings from global variables to the specified
@@ -137,104 +142,110 @@ static void LoadGameSettings(net_gamesettings_t *settings)
 
 static void SaveGameSettings(net_gamesettings_t *settings)
 {
-	// jhaley 20120715: Some parts of the structure are being left
-	// uninitialized. If -class is not used on the command line, this
-	// can lead to a crash in SB_Init due to player class == 0xCCCCCCCC.
-	memset(settings, 0, sizeof(*settings));
+    // jhaley 20120715: Some parts of the structure are being left
+    // uninitialized. If -class is not used on the command line, this
+    // can lead to a crash in SB_Init due to player class == 0xCCCCCCCC.
+    memset(settings, 0, sizeof(*settings));
 
-	// Fill in game settings structure with appropriate parameters
-	// for the new game
+    // Fill in game settings structure with appropriate parameters
+    // for the new game
 
-	settings->deathmatch = deathmatch;
-	settings->episode = startepisode;
-	settings->map = startmap;
-	settings->skill = startskill;
-	// TODO settings->loadgame = startloadgame;
-	settings->gameversion = exe_hexen_1_1;
-	settings->nomonsters = nomonsters;
-	settings->respawn_monsters = respawnparm;
-	settings->timelimit = 0;
-	settings->lowres_turn = false;
+    settings->deathmatch = deathmatch;
+    settings->episode = startepisode;
+    settings->map = startmap;
+    settings->skill = startskill;
+    // TODO settings->loadgame = startloadgame;
+    settings->gameversion = exe_hexen_1_1;
+    settings->nomonsters = nomonsters;
+    settings->respawn_monsters = respawnparm;
+    settings->timelimit = 0;
+
+    settings->lowres_turn = M_ParmExists("-record")
+                         && !M_ParmExists("-longtics");
 }
 
 static void InitConnectData(net_connect_data_t *connect_data)
 {
-	int i;
+    int i;
 
-	//
-	// Connect data
-	//
+    //
+    // Connect data
+    //
 
-	// Game type fields:
+    // Game type fields:
 
-	connect_data->gamemode = gamemode;
-	connect_data->gamemission = hexen;
+    connect_data->gamemode = gamemode;
+    connect_data->gamemission = hexen;
 
-	connect_data->lowres_turn = false;
-	connect_data->drone = false;
-	connect_data->max_players = maxplayers;
+    // Are we recording a demo? Possibly set lowres turn mode
 
-	//!
-	// @category net
-	// @arg <n>
-	//
-	// Specify player class: 0=fighter, 1=cleric, 2=mage, 3=pig.
-	//
+    connect_data->lowres_turn = M_ParmExists("-record")
+                             && !M_ParmExists("-longtics");
 
-	i = M_CheckParmWithArgs("-class", 1);
+    connect_data->drone = false;
+    connect_data->max_players = maxplayers;
 
-	if (i > 0)
-	{
-		connect_data->player_class = atoi(myargv[i + 1]);
-	}
-	else
-	{
-		connect_data->player_class = PCLASS_FIGHTER;
-	}
+    //!
+    // @category net
+    // @arg <n>
+    //
+    // Specify player class: 0=fighter, 1=cleric, 2=mage, 3=pig.
+    //
 
-	// Read checksums of our WAD directory and dehacked information
+    i = M_CheckParmWithArgs("-class", 1);
 
-	W_Checksum(connect_data->wad_sha1sum);
-	memset(connect_data->deh_sha1sum, 0, sizeof(sha1_digest_t));
+    if (i > 0)
+    {
+        connect_data->player_class = atoi(myargv[i + 1]);
+    }
+    else
+    {
+        connect_data->player_class = PCLASS_FIGHTER;
+    }
 
-	connect_data->is_freedoom = 0;
+    // Read checksums of our WAD directory and dehacked information
+
+    W_Checksum(connect_data->wad_sha1sum);
+    memset(connect_data->deh_sha1sum, 0, sizeof(sha1_digest_t));
+
+    connect_data->is_freedoom = 0;
 }
 
 void D_ConnectNetGame(void)
 {
-	net_connect_data_t connect_data;
+    net_connect_data_t connect_data;
 
-	InitConnectData(&connect_data);
-	netgame = D_InitNetGame(&connect_data);
+    InitConnectData(&connect_data);
+    netgame = D_InitNetGame(&connect_data);
 
-	//!
-	// @category net
-	//
-	// Start the game playing as though in a netgame with a single
-	// player.  This can also be used to play back single player netgame
-	// demos.
-	//
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
 
-	if (M_CheckParm("-solo-net") > 0)
-	{
-		netgame = true;
-	}
+    if (M_CheckParm("-solo-net") > 0)
+    {
+        netgame = true;
+    }
 }
 
 static boolean StartupProgress(int now_ready, int total)
 {
-	static int ready = 0;
+    static int ready = 0;
 
-	while (ready < now_ready)
-	{
-		ST_NetProgress();
-		++ready;
-	}
+    while (ready < now_ready)
+    {
+        ST_NetProgress();
+        ++ready;
+    }
 
-	ready = now_ready;
+    ready = now_ready;
 
-	// Allow the user to hit escape during netgame startup to abort.
-	return !I_CheckAbortHR();
+    // Allow the user to hit escape during netgame startup to abort.
+    return !I_CheckAbortHR();
 }
 
 //
@@ -244,26 +255,26 @@ static boolean StartupProgress(int now_ready, int total)
 
 void D_CheckNetGame(void)
 {
-	net_gamesettings_t settings;
+    net_gamesettings_t settings;
 
-	D_RegisterLoopCallbacks(&hexen_loop_interface);
+    D_RegisterLoopCallbacks(&hexen_loop_interface);
 
-	if (netgame)
-	{
-		autostart = true;
-	}
+    if (netgame)
+    {
+        autostart = true;
+    }
 
-	SaveGameSettings(&settings);
-	D_StartNetGame(&settings, StartupProgress);
-	LoadGameSettings(&settings);
+    SaveGameSettings(&settings);
+    D_StartNetGame(&settings, StartupProgress);
+    LoadGameSettings(&settings);
 
-	// Finish netgame progress on startup screen.
+    // Finish netgame progress on startup screen.
 
-	if (netgame)
-	{
-		StartupProgress(settings.num_players, settings.num_players);
-		ST_NetDone();
-	}
+    if (netgame)
+    {
+        StartupProgress(settings.num_players, settings.num_players);
+        ST_NetDone();
+    }
 }
 
 //==========================================================================
@@ -274,6 +285,6 @@ void D_CheckNetGame(void)
 
 void NET_SendFrags(player_t * player)
 {
-	// Not sure what this is intended for. Unused?
+    // Not sure what this is intended for. Unused?
 }
 
